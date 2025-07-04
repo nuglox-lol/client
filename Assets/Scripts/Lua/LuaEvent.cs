@@ -5,31 +5,31 @@ using UnityEngine;
 [MoonSharpUserData]
 public class LuaEvent
 {
-	private GameObject go;
+    private GameObject go;
 
-	private Script luaScript;
+    private Script initialScript;
 
-	private event Action<DynValue> touchedHandlers;
+    private event Action<DynValue> touchedHandlers;
 
-	public LuaEvent(GameObject gameObject, Script lua)
-	{
-		go = gameObject;
-		luaScript = lua;
-	}
+    public LuaEvent(GameObject gameObject, Script luaScript)
+    {
+        go = gameObject;
+        initialScript = luaScript;
+    }
 
-	public void Connect(DynValue function)
-	{
-		if (function.Type == DataType.Function)
-		{
-			touchedHandlers += delegate(DynValue hitObj)
-			{
-				luaScript.Call(function, hitObj);
-			};
-		}
-	}
+    public void Connect(Script luaScript, DynValue function)
+    {
+        if (function.Type == DataType.Function)
+        {
+            touchedHandlers += (DynValue hitObj) =>
+            {
+                luaScript.Call(function, hitObj);
+            };
+        }
+    }
 
-	public void Fire(DynValue hitInstanceDatamodel)
-	{
-		this.touchedHandlers?.Invoke(hitInstanceDatamodel);
-	}
+    public void Fire(DynValue hitInstanceDatamodel)
+    {
+        touchedHandlers?.Invoke(hitInstanceDatamodel);
+    }
 }

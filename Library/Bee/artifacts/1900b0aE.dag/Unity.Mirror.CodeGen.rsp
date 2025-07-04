@@ -340,6 +340,7 @@
 -r:"F:/Unity/2022.3.62f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.Transactions.dll"
 -r:"F:/Unity/2022.3.62f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.Xml.dll"
 -r:"F:/Unity/2022.3.62f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.Xml.Linq.dll"
+-r:"Library/PackageCache/com.unity.ext.nunit@1.0.6/net35/unity-custom/nunit.framework.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Mirror.ref.dll"
 -analyzer:"F:/Unity/2022.3.62f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"F:/Unity/2022.3.62f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"

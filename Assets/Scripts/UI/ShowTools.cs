@@ -12,7 +12,7 @@ public class ShowTools : MonoBehaviour
 
     private void Awake()
     {
-        layoutGroup = transform.parent;
+        layoutGroup = transform;
         toolUIPrefab = Resources.Load<GameObject>("Tool");
     }
 
