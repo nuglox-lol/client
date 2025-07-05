@@ -230,6 +230,11 @@ public static class DataService
 
             if (isMultiplayer) NetworkServer.Spawn(obj);
 
+            obj.name = data.Name;
+            obj.transform.position = data.Position.ToVector3();
+            obj.transform.eulerAngles = data.Rotation.ToVector3();
+            obj.transform.localScale = data.Scale.ToVector3();
+
             var rb = obj.GetComponent<Rigidbody>();
 
             if (data.Anchored)

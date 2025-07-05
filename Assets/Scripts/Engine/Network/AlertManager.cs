@@ -24,7 +24,7 @@ public class AlertManager : NetworkBehaviour
     }
 
     [TargetRpc]
-    public void TargetSendAlert(NetworkConnection target, string message, float duration) // ✅ allowed, no default
+    public void TargetSendAlert(NetworkConnection target, string message, float duration)
     {
         ShowAlert(message, duration);
     }

@@ -231,10 +231,25 @@ public class ScriptService : NetworkBehaviour
 
             Debug.Log($"AlertAll called on server by '{gameObject.name}' sending message: \"{msg}\" for {duration} seconds");
 
-            RpcShowAlert(msg, duration);
+            if (netIdentity != null && netIdentity.observers != null)
+            {
+                foreach (var conn in netIdentity.observers.Values)
+                {
+                    Debug.Log($"Observer connection: {conn.connectionId}");
+                }
+
+            }
+            else
+            {
+                Debug.LogWarning("NetIdentity or its observers list is null!");
+            }
+            
+            if (isServer)
+            {
+                RpcShowAlert(msg, duration);
+            }
             return DynValue.Nil;
         }));
-
 
         gameTable.Set("Alert", DynValue.NewCallback((c, args) =>
         {
@@ -295,6 +310,7 @@ public class ScriptService : NetworkBehaviour
     private void Start()
     {
         InvokeRepeating("UpdateWorkspaceTable", 0f, 1f);
+        Debug.Log($"{gameObject.name} netId: {netIdentity.netId}");
     }
 
     public IEnumerator RunScriptWhenReady(string luaCode)
@@ -327,7 +343,6 @@ public class ScriptService : NetworkBehaviour
     [ClientRpc]
     public void RpcShowAlert(string message, float duration)
     {
-        if (isServer && !isClient) return;
         Debug.Log("RAZIEAE");
         ShowAlert(message, duration);
     }
