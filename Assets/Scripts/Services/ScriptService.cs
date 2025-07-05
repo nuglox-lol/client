@@ -22,6 +22,14 @@ public class ScriptService : NetworkBehaviour
     private Dictionary<string, InstanceDatamodel> trackedInstances = new();
     private HashSet<string> currentFrameKeys = new();
 
+    [Command]
+    public void CmdRunCodeOnServer(string luaCode)
+    {
+        Debug.Log("Received Lua code from client, scheduling to run on server when ready.");
+
+        StartCoroutine(RunScriptWhenReady(luaCode));
+    }
+
     public void Init(Dictionary<string, object> globals = null)
     {
         script = new Script();
@@ -221,9 +229,12 @@ public class ScriptService : NetworkBehaviour
             string msg = args[0].CastToString();
             float duration = (float)(args.Count > 1 && args[1].Type == DataType.Number ? args[1].Number : 3f);
 
+            Debug.Log($"AlertAll called on server by '{gameObject.name}' sending message: \"{msg}\" for {duration} seconds");
+
             RpcShowAlert(msg, duration);
             return DynValue.Nil;
         }));
+
 
         gameTable.Set("Alert", DynValue.NewCallback((c, args) =>
         {
@@ -268,6 +279,17 @@ public class ScriptService : NetworkBehaviour
                 }
             }
         }
+
+        script.Globals["SendCodeToServer"] = (Action<string>)((code) =>
+        {
+            if (!isLocalPlayer)
+            {
+                Debug.LogWarning("SendCodeToServer can only be called by the local player.");
+                return;
+            }
+
+            CmdRunCodeOnServer(code);
+        });
     }
 
     private void Start()
@@ -299,11 +321,18 @@ public class ScriptService : NetworkBehaviour
     [TargetRpc]
     public void TargetShowAlert(NetworkConnection target, string message, float duration)
     {
-        RpcShowAlert(message, duration);
+        ShowAlert(message, duration);
     }
 
     [ClientRpc]
     public void RpcShowAlert(string message, float duration)
+    {
+        if (isServer && !isClient) return;
+        Debug.Log("RAZIEAE");
+        ShowAlert(message, duration);
+    }
+
+    private void ShowAlert(string message, float duration)
     {
         var coreGui = GameObject.Find("CoreGui");
         if (coreGui == null) return;

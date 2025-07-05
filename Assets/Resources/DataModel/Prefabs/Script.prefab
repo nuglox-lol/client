@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7574209401533224885}
   - component: {fileID: 719760247369784693}
-  - component: {fileID: 5419702482273687002}
   - component: {fileID: 2170587526000323452}
+  - component: {fileID: -481924063383719710}
+  - component: {fileID: 1633976304263532986}
   m_Layer: 0
   m_Name: Script
   m_TagString: Object
@@ -51,7 +52,36 @@ MonoBehaviour:
   syncInterval: 0
   Script: 
   isLocalScript: 0
---- !u!114 &5419702482273687002
+--- !u!114 &2170587526000323452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4957806643763680526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  className: Script
+--- !u!114 &-481924063383719710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4957806643763680526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 918d951be8fc4b9458deb285f122d0da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  scriptResult: 
+--- !u!114 &1633976304263532986
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -68,16 +98,3 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!114 &2170587526000323452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4957806643763680526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  className: Script

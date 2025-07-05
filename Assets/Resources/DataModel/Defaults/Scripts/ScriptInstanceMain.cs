@@ -12,23 +12,34 @@ public class ScriptInstanceMain : NetworkBehaviour
 
     private IEnumerator Start()
     {
-        //if (SceneManager.GetActiveScene().name != "Studio")
-            //yield break;
+        manager = GetComponent<ScriptService>();
+        if (manager == null)
+        {
+            Debug.LogError("ScriptService component is missing! Please add it to this GameObject.");
+            yield break;
+        }
+
+        if (SceneManager.GetActiveScene().name == "Studio")
+            yield break;
 
         if (isLocalScript)
         {
-            if (!isLocalPlayer && SceneManager.GetActiveScene().name != "Studio")
+            if (!isLocalPlayer || isServer)
+            {
+                Debug.Log("Blocked: Local script must run only on client");
                 yield break;
+            }
         }
         else
         {
-            if (!isServer && SceneManager.GetActiveScene().name != "Studio")
+            if (!isServer || isLocalPlayer)
+            {
+                Debug.Log("Blocked: Global script must run only on server");
                 yield break;
+            }
         }
 
-        manager = gameObject.AddComponent<ScriptService>();
         manager.Init();
-
         yield return manager.RunScriptWhenReady(Script);
     }
 }
