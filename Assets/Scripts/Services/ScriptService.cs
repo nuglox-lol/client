@@ -229,25 +229,21 @@ public class ScriptService : NetworkBehaviour
             string msg = args[0].CastToString();
             float duration = (float)(args.Count > 1 && args[1].Type == DataType.Number ? args[1].Number : 3f);
 
-            Debug.Log($"AlertAll called on server by '{gameObject.name}' sending message: \"{msg}\" for {duration} seconds");
-
-            if (netIdentity != null && netIdentity.observers != null)
-            {
-                foreach (var conn in netIdentity.observers.Values)
-                {
-                    Debug.Log($"Observer connection: {conn.connectionId}");
-                }
-
-            }
-            else
-            {
-                Debug.LogWarning("NetIdentity or its observers list is null!");
-            }
-            
             if (isServer)
             {
-                RpcShowAlert(msg, duration);
+                foreach (var conn in NetworkServer.connections.Values)
+                {
+                    if (conn.identity != null)
+                    {
+                        var player = conn.identity.GetComponent<Player>();
+                        if (player != null)
+                        {
+                            player.TargetShowAlert(conn, msg, duration);
+                        }
+                    }
+                }
             }
+
             return DynValue.Nil;
         }));
 
@@ -270,7 +266,11 @@ public class ScriptService : NetworkBehaviour
                         var identity = gameObj.GetComponent<NetworkIdentity>();
                         if (identity != null && identity.connectionToClient != null)
                         {
-                            TargetShowAlert(identity.connectionToClient, msg, duration);
+                            var player = identity.GetComponent<Player>();
+                            if (player != null)
+                            {
+                                player.TargetShowAlert(identity.connectionToClient, msg, duration);
+                            }
                         }
                     }
                 }
@@ -332,41 +332,6 @@ public class ScriptService : NetworkBehaviour
         string wrappedCode = $"return coroutine.create(function()\n{luaCode}\nend)";
         luaMainCoroutine = script.DoString(wrappedCode);
         luaCoroutine = StartCoroutine(LuaCoroutineRunner(onComplete));
-    }
-
-    [TargetRpc]
-    public void TargetShowAlert(NetworkConnection target, string message, float duration)
-    {
-        ShowAlert(message, duration);
-    }
-
-    [ClientRpc]
-    public void RpcShowAlert(string message, float duration)
-    {
-        Debug.Log("RAZIEAE");
-        ShowAlert(message, duration);
-    }
-
-    private void ShowAlert(string message, float duration)
-    {
-        var coreGui = GameObject.Find("CoreGui");
-        if (coreGui == null) return;
-
-        var alertPanel = coreGui.transform.Find("AlertPanel");
-        var alertText = alertPanel?.Find("AlertMessage")?.GetComponent<TMPro.TextMeshProUGUI>();
-
-        if (alertPanel == null || alertText == null) return;
-
-        alertText.text = message;
-        alertPanel.gameObject.SetActive(true);
-
-        StartCoroutine(HideAlertAfterDelay(alertPanel.gameObject, duration));
-    }
-
-    private IEnumerator HideAlertAfterDelay(GameObject panel, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        panel.SetActive(false);
     }
 
     private IEnumerator LuaCoroutineRunner(Action<string> onComplete)

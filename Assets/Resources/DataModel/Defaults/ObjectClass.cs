@@ -4,13 +4,20 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mirror;
 
-public class ObjectClass : MonoBehaviour
+public class ObjectClass : NetworkBehaviour
 {
     public string className;
 
+    [SyncVar(hook = nameof(OnNameChanged))]
+    private string syncedName;
+
     void Start()
     {
-        RenameIfDuplicate();
+        if (isServer)
+        {
+            RenameIfDuplicate();
+            syncedName = gameObject.name;
+        }
 
         Scene currentScene = SceneManager.GetActiveScene();
         if (currentScene.name == "BCS")
@@ -57,5 +64,11 @@ public class ObjectClass : MonoBehaviour
             gameObject.name = baseName + "-" + suffix;
             suffix++;
         }
+    }
+
+    void OnNameChanged(string oldName, string newName)
+    {
+        if (!isServer)
+            gameObject.name = newName;
     }
 }

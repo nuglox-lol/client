@@ -206,47 +206,64 @@ public static class DataService
 
         foreach (var data in saveData.Objects)
         {
+            GameObject obj;
+
             if (data.Name == "MapCamera")
             {
-                GameObject camCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                camCube.name = "MapCamera";
-                GameObject.Destroy(camCube.GetComponent<Collider>());
-                camCube.GetComponent<Renderer>().enabled = false;
-                camCube.transform.position = data.Position.ToVector3();
-                camCube.transform.eulerAngles = data.Rotation.ToVector3();
-                camCube.transform.localScale = data.Scale.ToVector3();
-                objectMap[camCube.name] = camCube;
-                spawnedObjects.Add(camCube);
-                continue;
-            }
-
-            GameObject obj = DataModel.SpawnClass(data.ClassName);
-            if (obj == null) continue;
-
-            obj.name = data.Name;
-            obj.transform.position = data.Position.ToVector3();
-            obj.transform.eulerAngles = data.Rotation.ToVector3();
-            obj.transform.localScale = data.Scale.ToVector3();
-
-            if (isMultiplayer) NetworkServer.Spawn(obj);
-
-            obj.name = data.Name;
-            obj.transform.position = data.Position.ToVector3();
-            obj.transform.eulerAngles = data.Rotation.ToVector3();
-            obj.transform.localScale = data.Scale.ToVector3();
-
-            var rb = obj.GetComponent<Rigidbody>();
-
-            if (data.Anchored)
-            {
-                if (rb != null)
-                    GameObject.Destroy(rb);
+                obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                obj.name = "MapCamera";
+                GameObject.Destroy(obj.GetComponent<Collider>());
+                obj.GetComponent<Renderer>().enabled = false;
             }
             else
             {
-                if (rb == null)
-                    rb = obj.AddComponent<Rigidbody>();
+                obj = DataModel.SpawnClass(data.ClassName);
+                if (obj == null) continue;
+                obj.name = data.Name;
+            }
 
+            objectMap[obj.name] = obj;
+            spawnedObjects.Add(obj);
+        }
+
+        foreach (var data in saveData.Objects)
+        {
+            if (!objectMap.TryGetValue(data.Name, out var obj)) continue;
+
+            obj.transform.position = data.Position.ToVector3();
+            obj.transform.eulerAngles = data.Rotation.ToVector3();
+            obj.transform.localScale = data.Scale.ToVector3();
+
+            if (!string.IsNullOrEmpty(data.ParentName) && objectMap.TryGetValue(data.ParentName, out var parent))
+            {
+                obj.transform.SetParent(parent.transform, true);
+            }
+        }
+        
+        foreach (var data in saveData.Objects)
+        {
+            if (!objectMap.TryGetValue(data.Name, out var obj)) continue;
+
+            var luaComp = obj.GetComponent<ScriptInstanceMain>();
+            if (luaComp != null && !string.IsNullOrEmpty(data.ScriptContent))
+            {
+                luaComp.Script = data.ScriptContent;
+                luaComp.isLocalScript = data.ClassName == "Script" && data.IsLocalScript;
+            }
+
+            if (isMultiplayer && data.Name != "MapCamera")
+                NetworkServer.Spawn(obj);
+
+            if (data.Name == "MapCamera") continue;
+
+            var rb = obj.GetComponent<Rigidbody>();
+            if (data.Anchored)
+            {
+                if (rb != null) GameObject.Destroy(rb);
+            }
+            else
+            {
+                if (rb == null) rb = obj.AddComponent<Rigidbody>();
                 rb.isKinematic = false;
                 rb.useGravity = data.Gravity;
                 rb.constraints = RigidbodyConstraints.None;
@@ -256,12 +273,8 @@ public static class DataService
                 rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
             }
 
-            var colliders = obj.GetComponents<Collider>();
-            if (colliders.Length > 0)
-            {
-                foreach (var col in colliders)
-                    col.enabled = data.CanCollide;
-            }
+            foreach (var col in obj.GetComponents<Collider>())
+                col.enabled = data.CanCollide;
 
             var renderer = obj.GetComponent<Renderer>();
             if (renderer)
@@ -270,39 +283,18 @@ public static class DataService
                 renderer.material.color = data.Color.ToColor();
             }
 
-            if (obj.GetComponent<ColorSync>() != null)
-                obj.GetComponent<ColorSync>().SetColor(data.Color.ToColor());
+            var colorSync = obj.GetComponent<ColorSync>();
+            if (colorSync != null)
+                colorSync.SetColor(data.Color.ToColor());
 
             var classComp = obj.GetComponent<ObjectClass>();
             if (classComp != null)
                 classComp.className = data.ClassName;
-
-            var luaComp = obj.GetComponent<ScriptInstanceMain>();
-            if (luaComp != null && !string.IsNullOrEmpty(data.ScriptContent))
-            {
-                luaComp.Script = data.ScriptContent;
-                if (data.ClassName == "Script")
-                    luaComp.isLocalScript = data.IsLocalScript;
-                else
-                    luaComp.isLocalScript = false;
-            }
-
-            objectMap[obj.name] = obj;
-            spawnedObjects.Add(obj);
-        }
-
-        foreach (var data in saveData.Objects)
-        {
-            if (data.Name == "MapCamera") continue;
-
-            if (!string.IsNullOrEmpty(data.ParentName) && objectMap.ContainsKey(data.Name) && objectMap.ContainsKey(data.ParentName))
-            {
-                objectMap[data.Name].transform.SetParent(objectMap[data.ParentName].transform);
-            }
         }
 
         return spawnedObjects.ToArray();
     }
+
 
     public static IEnumerator SaveToWebsite(string path, string uploadUrl)
     {

@@ -16,7 +16,9 @@ public static class DataModel
         "BallPart",
         "CylinderPart",
         "Tool",
-        "Light"
+        "Light",
+        "Fire",
+        "Explosion"
     };
 
     public static GameObject LoadDataModel(string className)

@@ -5,7 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class ScriptInstanceMain : NetworkBehaviour
 {
+    [SyncVar]
     public string Script;
+    
     public bool isLocalScript;
 
     private ScriptService manager;
