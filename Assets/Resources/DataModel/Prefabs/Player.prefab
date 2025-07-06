@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: -3361828867145236584}
   - component: {fileID: 3916508158322671054}
   - component: {fileID: 1982466360387712445}
+  - component: {fileID: -8293713357759093702}
   m_Layer: 0
   m_Name: Player
   m_TagString: Object
@@ -67,7 +68,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.15
+  m_Radius: 1.5
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 2, z: 0}
@@ -201,6 +202,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   className: Player
 --- !u!95 &3916508158322671054
 Animator:
@@ -240,6 +244,19 @@ MonoBehaviour:
   syncInterval: 0
   clientAuthority: 1
   animator: {fileID: 3916508158322671054}
+--- !u!114 &-8293713357759093702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2854521769487671702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab5b9ede06c454a439c1e798b5b9846c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 8
 --- !u!1 &4271057839239049545
 GameObject:
   m_ObjectHideFlags: 0
@@ -486,6 +503,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   className: Part
 --- !u!1001 &5110830851316549250
 PrefabInstance:
@@ -585,6 +605,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   className: Part
 --- !u!1001 &5297092285278123996
 PrefabInstance:
@@ -690,6 +713,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   className: Part
 --- !u!4 &5623223673118494775 stripped
 Transform:
@@ -797,6 +823,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   className: Part
 --- !u!4 &5648740226265882820 stripped
 Transform:
@@ -901,6 +930,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   className: Part
 --- !u!1001 &8698555736941479901
 PrefabInstance:
@@ -1003,6 +1035,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   className: Part
 --- !u!4 &9168698986149191734 stripped
 Transform:

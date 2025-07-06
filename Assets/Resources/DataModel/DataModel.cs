@@ -18,7 +18,8 @@ public static class DataModel
         "Tool",
         "Light",
         "Fire",
-        "Explosion"
+        "Explosion",
+        "Truss"
     };
 
     public static GameObject LoadDataModel(string className)
