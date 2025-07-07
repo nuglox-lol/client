@@ -16,7 +16,7 @@ public class Explosion : MonoBehaviour
         {
             _particles.Play();
         }
-        
+
         Collider[] hits = Physics.OverlapSphere(transform.position, _radius);
 
         foreach (Collider hit in hits)
@@ -27,6 +27,9 @@ public class Explosion : MonoBehaviour
 
             if (rb != null && rb.isKinematic)
             {
+                rb.isKinematic = false;
+            }else{
+                rb = hit.gameObject.AddComponent<Rigidbody>();
                 rb.isKinematic = false;
             }
         }

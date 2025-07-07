@@ -445,6 +445,7 @@ public class ScriptService : NetworkBehaviour
                     "Player" => new InstancePlayer(go),
                     "Tool" => new InstanceTool(go, script),
                     "Part" => new InstanceDatamodel(go),
+                    "Explosion" => new InstanceExplosion(go),
                     _ => new InstanceDatamodel(go)
                 };
 

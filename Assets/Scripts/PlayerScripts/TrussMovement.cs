@@ -3,12 +3,14 @@ using UnityEngine;
 public class TrussMovement : MonoBehaviour
 {
     private Rigidbody rb;
+    private Animator animator;
     private bool isClimbing = false;
     public float speed = 5f;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -19,6 +21,9 @@ public class TrussMovement : MonoBehaviour
             isClimbing = true;
             rb.useGravity = false;
             rb.velocity = Vector3.zero;
+
+            if (animator != null)
+                animator.SetBool("IsClimbing", true);
         }
     }
 
@@ -29,6 +34,9 @@ public class TrussMovement : MonoBehaviour
         {
             isClimbing = false;
             rb.useGravity = true;
+
+            if (animator != null)
+                animator.SetBool("IsClimbing", false);
         }
     }
 
