@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4916028508103496070}
   - component: {fileID: -9045591348721505189}
   - component: {fileID: -996017609653860203}
+  - component: {fileID: -7729618366242141002}
   m_Layer: 0
   m_Name: BackgroundPlayer
   m_TagString: Object
@@ -159,6 +160,10 @@ MonoBehaviour:
   userID: 0
   username: Guest
   isAdmin: 0
+  health: 0
+  maximumHealth: 100
+  respawnTime: 5
+  playerBody: {fileID: 0}
 --- !u!114 &-9045591348721505189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,6 +195,18 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   className: BackgroundPlayer
+--- !u!114 &-7729618366242141002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2854521769487671702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee4da198b507727b7d8b1dbe63a0396, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4271057839239049545
 GameObject:
   m_ObjectHideFlags: 0

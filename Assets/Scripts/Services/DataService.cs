@@ -24,6 +24,11 @@ public static class DataService
         public bool Gravity;
         public bool CanCollide;
         public bool IsLocalScript;
+        public float Mass;
+        public float ExplosionRadius;
+        public float ExplosionForce;
+        public float ExplosionUpwardsModifier;
+        public float ExplosionMassThreshold;
     }
 
     [System.Serializable]
@@ -86,11 +91,18 @@ public static class DataService
             var rb = obj.GetComponent<Rigidbody>();
             bool anchored = rb == null;
             bool gravity = rb != null ? rb.useGravity : false;
+            float mass = rb != null ? rb.mass : 1f;
 
             var colliders = obj.GetComponents<Collider>();
             bool canCollide = true;
             if (colliders.Length > 0)
                 canCollide = colliders[0].enabled;
+
+            var explosion = obj.GetComponent<Explosion>();
+            float explosionRadius = explosion ? explosion.radius : 0f;
+            float explosionForce = explosion ? explosion.explosionForce : 0f;
+            float upwardsMod = explosion ? explosion.upwardsModifier : 0f;
+            float massThreshold = explosion ? explosion.massThreshold : 0f;
 
             saveData.Objects.Add(new SavedObjectData
             {
@@ -105,7 +117,12 @@ public static class DataService
                 Anchored = anchored,
                 Gravity = gravity,
                 CanCollide = canCollide,
-                IsLocalScript = classComp.className == "Script" ? isLocalScript : false
+                IsLocalScript = classComp.className == "Script" ? isLocalScript : false,
+                Mass = mass,
+                ExplosionRadius = explosionRadius,
+                ExplosionForce = explosionForce,
+                ExplosionUpwardsModifier = upwardsMod,
+                ExplosionMassThreshold = massThreshold
             });
         }
 
@@ -125,7 +142,12 @@ public static class DataService
                 Anchored = true,
                 Gravity = false,
                 CanCollide = false,
-                IsLocalScript = false
+                IsLocalScript = false,
+                Mass = 1f,
+                ExplosionRadius = 0f,
+                ExplosionForce = 0f,
+                ExplosionUpwardsModifier = 0f,
+                ExplosionMassThreshold = 0f
             });
         }
 
@@ -170,10 +192,7 @@ public static class DataService
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
-        {
-            Debug.LogError("Failed to load URL: " + request.error);
             yield break;
-        }
 
         SaveData saveData;
         try
@@ -184,9 +203,8 @@ public static class DataService
                 saveData = (SaveData)serializer.Deserialize(reader);
             }
         }
-        catch (System.Exception ex)
+        catch
         {
-            Debug.LogError("Failed to deserialize data: " + ex.Message);
             yield break;
         }
 
@@ -235,11 +253,9 @@ public static class DataService
             obj.transform.localScale = data.Scale.ToVector3();
 
             if (!string.IsNullOrEmpty(data.ParentName) && objectMap.TryGetValue(data.ParentName, out var parent))
-            {
                 obj.transform.SetParent(parent.transform, true);
-            }
         }
-        
+
         foreach (var data in saveData.Objects)
         {
             if (!objectMap.TryGetValue(data.Name, out var obj)) continue;
@@ -271,6 +287,7 @@ public static class DataService
                 rb.angularVelocity = Vector3.zero;
                 rb.interpolation = RigidbodyInterpolation.None;
                 rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+                rb.mass = Mathf.Max(0.01f, data.Mass);
             }
 
             foreach (var col in obj.GetComponents<Collider>())
@@ -290,11 +307,19 @@ public static class DataService
             var classComp = obj.GetComponent<ObjectClass>();
             if (classComp != null)
                 classComp.className = data.ClassName;
+
+            var explosion = obj.GetComponent<Explosion>();
+            if (explosion != null)
+            {
+                explosion.radius = data.ExplosionRadius;
+                explosion.explosionForce = data.ExplosionForce;
+                explosion.upwardsModifier = data.ExplosionUpwardsModifier;
+                explosion.massThreshold = data.ExplosionMassThreshold;
+            }
         }
 
         return spawnedObjects.ToArray();
     }
-
 
     public static IEnumerator SaveToWebsite(string path, string uploadUrl)
     {
@@ -308,11 +333,6 @@ public static class DataService
         using (UnityWebRequest www = UnityWebRequest.Post(uploadUrl, form))
         {
             yield return www.SendWebRequest();
-
-            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.LogError("Upload failed: " + www.error);
-            }
         }
     }
 

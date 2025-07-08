@@ -23,6 +23,22 @@ public class InstancePlayer : InstanceDatamodel
         set { Transform.GetComponent<Player>().userID = value; }
     }
 
+    public ulong NetworkId { get; private set; }
+
+    public int NetID => (int)NetworkId;
+
+    public int Health
+    {
+        get => Transform.GetComponent<Player>().health;
+        set { Transform.GetComponent<Player>().health = value; }
+    }
+
+    public int MaximumHealth
+    {
+        get => Transform.GetComponent<Player>().maximumHealth;
+        set { Transform.GetComponent<Player>().maximumHealth = value; }
+    }
+
     public string Username
     {
         get => Transform.GetComponent<Player>().username;

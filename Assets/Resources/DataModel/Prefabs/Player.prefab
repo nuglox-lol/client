@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8906263505877172754}
-  - component: {fileID: 3307770412282667847}
+  - component: {fileID: 7865812498200680413}
   - component: {fileID: 951667663498806964}
   - component: {fileID: 643295846759517928}
   - component: {fileID: 5711135955653485009}
@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 1982466360387712445}
   - component: {fileID: -8293713357759093702}
   - component: {fileID: 3983610611232682823}
+  - component: {fileID: -7982788365909478032}
   m_Layer: 0
   m_Name: Player
   m_TagString: Object
@@ -50,7 +51,7 @@ Transform:
   - {fileID: 1642782290470850431}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &3307770412282667847
+--- !u!136 &7865812498200680413
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -69,10 +70,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.5
-  m_Height: 2
+  m_Radius: 3
+  m_Height: 4
   m_Direction: 1
-  m_Center: {x: 0, y: 2, z: 0}
+  m_Center: {x: 0, y: 2.8, z: 0}
 --- !u!114 &951667663498806964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +165,7 @@ MonoBehaviour:
   health: 100
   maximumHealth: 100
   respawnTime: 5
-  playerBody: {fileID: 0}
+  playerBody: {fileID: 2854521769487671702}
 --- !u!114 &-3733742721206811073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,6 +359,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-7982788365909478032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2854521769487671702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee4da198b507727b7d8b1dbe63a0396, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1
 --- !u!1 &4271057839239049545
 GameObject:
   m_ObjectHideFlags: 0

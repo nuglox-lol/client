@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8381820201637124176}
   - component: {fileID: 6089371693849795858}
   - component: {fileID: 7122420770886606130}
+  - component: {fileID: -5170304615074142561}
   m_Layer: 0
   m_Name: BallPart
   m_TagString: Object
@@ -174,3 +175,15 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!114 &-5170304615074142561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5797797915581634721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee4da198b507727b7d8b1dbe63a0396, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

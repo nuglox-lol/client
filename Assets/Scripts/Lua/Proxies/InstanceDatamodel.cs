@@ -33,6 +33,39 @@ public class InstanceDatamodel
 			go.AddComponent<TouchedHandler>();
 		}
 	}
+	
+	public float Mass
+	{
+		get
+		{
+			Rigidbody rigidbody = go?.GetComponent<Rigidbody>();
+			if (rigidbody != null)
+			{
+				return rigidbody.mass;
+			}
+			return 0f;
+		}
+		set
+		{
+			Rigidbody rigidbody = go?.GetComponent<Rigidbody>();
+			if (rigidbody != null)
+			{
+				rigidbody.mass = value;
+			}
+			else if (go != null)
+			{
+				rigidbody = go.AddComponent<Rigidbody>();
+				rigidbody.mass = value;
+			}
+			OnPropertyChanged("Mass");
+		}
+	}
+
+
+	public string Class 
+	{
+		get => go.transform.GetComponent<ObjectClass>().className;
+	}
 
 	public Vector3 Position
 	{

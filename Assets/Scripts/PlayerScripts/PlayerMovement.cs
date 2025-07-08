@@ -13,10 +13,11 @@ public class PlayerMovement : NetworkBehaviour
     private bool isGrounded;
     private Seat currentSeat;
     private bool isSeated => currentSeat != null;
+    private Vector3 input;
 
     private void Start()
     {
-        if(!isLocalPlayer && !isStudio) return;
+        if (!isLocalPlayer && !isStudio) return;
 
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
@@ -38,7 +39,7 @@ public class PlayerMovement : NetworkBehaviour
 
     private void SpawnPlayerCamera()
     {
-        if(!isLocalPlayer && !isStudio) return;
+        if (!isLocalPlayer && !isStudio) return;
 
         GameObject prefab = Resources.Load<GameObject>("MainCameraPrefab");
         if (prefab == null) return;
@@ -57,17 +58,12 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Update()
     {
-        if(!isLocalPlayer && !isStudio) return;
+        if (!isLocalPlayer && !isStudio) return;
         if (!(isLocalPlayer || isStudio) || cam == null) return;
 
         if (isSeated)
         {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            transform.position = currentSeat.transform.position;
-
-            animator?.SetBool("IsWalking", false);
-
+            input = Vector3.zero;
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 CmdStandUp();
@@ -77,7 +73,21 @@ public class PlayerMovement : NetworkBehaviour
 
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        Vector3 input = new Vector3(horizontal, 0f, vertical);
+        input = new Vector3(horizontal, 0f, vertical);
+    }
+
+    private void FixedUpdate()
+    {
+        if (!isLocalPlayer && !isStudio) return;
+
+        if (isSeated)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            transform.position = currentSeat.transform.position;
+            animator?.SetBool("IsWalking", false);
+            return;
+        }
 
         if (input.sqrMagnitude > 0.01f)
         {
@@ -89,24 +99,23 @@ public class PlayerMovement : NetworkBehaviour
             right.y = 0f;
             right.Normalize();
 
-            Vector3 moveDir = (forward * vertical + right * horizontal).normalized;
-            Vector3 velocity = moveDir * speed;
-            rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);
+            Vector3 moveDir = (forward * input.z + right * input.x).normalized;
 
-            Quaternion targetRotation = Quaternion.LookRotation(moveDir, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            CmdMove(moveDir);
 
             animator?.SetBool("IsWalking", true);
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
         else
         {
-            rb.velocity = new Vector3(0f, rb.velocity.y, 0f);
+            CmdStop();
             animator?.SetBool("IsWalking", false);
         }
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+            CmdJump(jumpForce);
             isGrounded = false;
         }
 
@@ -128,6 +137,28 @@ public class PlayerMovement : NetworkBehaviour
     private void OnCollisionExit(Collision collision)
     {
         isGrounded = false;
+    }
+
+    [Command]
+    private void CmdMove(Vector3 moveDir)
+    {
+        if (rb == null) return;
+        Vector3 velocity = moveDir * speed;
+        rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);
+    }
+
+    [Command]
+    private void CmdStop()
+    {
+        if (rb == null) return;
+        rb.velocity = new Vector3(0f, rb.velocity.y, 0f);
+    }
+
+    [Command]
+    private void CmdJump(float force)
+    {
+        if (rb == null) return;
+        rb.velocity = new Vector3(rb.velocity.x, force, rb.velocity.z);
     }
 
     [Command]

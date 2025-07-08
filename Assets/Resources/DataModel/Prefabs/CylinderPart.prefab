@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7502919586949196299}
   - component: {fileID: 2613623614681214821}
   - component: {fileID: 6626413918139725773}
+  - component: {fileID: -4011163183216418792}
   m_Layer: 0
   m_Name: CylinderPart
   m_TagString: Object
@@ -174,3 +175,15 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!114 &-4011163183216418792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5809821611537109145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee4da198b507727b7d8b1dbe63a0396, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

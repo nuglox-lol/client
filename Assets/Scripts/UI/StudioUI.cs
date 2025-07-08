@@ -372,6 +372,12 @@ public class StudioUI : MonoBehaviour
                     {
                         rb.useGravity = gravity;
                     }
+
+                    float mass = rb.mass;
+                    if (ImGui.DragFloat("Mass", ref mass, 0.1f, 0.01f, 1000f))
+                    {
+                        rb.mass = Mathf.Max(0.01f, mass);
+                    }
                 }
             }
 
@@ -393,33 +399,32 @@ public class StudioUI : MonoBehaviour
                 ImGui.Checkbox("Can Collide (No Collider)", ref dummy);
             }
 
-            /*
-            ImGui.Separator();
-            ImGui.Text("Images");
-
-            ImGui.InputText("Image URL", ref imageUrl, 512);
-
-            if (ImGui.BeginCombo("Side", selectedSide.ToString()))
+            if (selectedObject.GetComponent<ObjectClass>().className == "Explosion")
             {
-                foreach (ImageSide side in Enum.GetValues(typeof(ImageSide)))
-                {
-                    bool isSelected = (side == selectedSide);
-                    if (ImGui.Selectable(side.ToString(), isSelected))
-                        selectedSide = side;
+                ImGui.Separator();
+                ImGui.Text("Explosion Settings");
 
-                    if (isSelected)
-                        ImGui.SetItemDefaultFocus();
+                var explosion = selectedObject.GetComponent<Explosion>();
+                if (explosion != null)
+                {
+                    float radius = explosion.radius;
+                    if (ImGui.DragFloat("Radius", ref radius, 0.1f, 0f, 100f))
+                        explosion.radius = radius;
+
+                    float force = explosion.explosionForce;
+                    if (ImGui.DragFloat("Force", ref force, 10f, 0f, 10000f))
+                        explosion.explosionForce = force;
+
+                    float upwards = explosion.upwardsModifier;
+                    if (ImGui.DragFloat("Upwards Modifier", ref upwards, 0.1f, -10f, 10f))
+                        explosion.upwardsModifier = upwards;
+
+                    float threshold = explosion.massThreshold;
+                    if (ImGui.DragFloat("Mass Threshold", ref threshold, 1f, 0f, 1000f))
+                        explosion.massThreshold = threshold;
                 }
-                ImGui.EndCombo();
             }
-
-            if (ImGui.Button("Load Image"))
-            {
-                if (!string.IsNullOrWhiteSpace(imageUrl))
-                {
-                    StartCoroutine(LoadImage(imageUrl, selectedSide));
-                }
-            }*/
+            
             if (selectedObject.GetComponent<ObjectClass>().className == "Script")
             {
                 ImGui.Separator();
