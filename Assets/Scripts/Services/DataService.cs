@@ -29,6 +29,9 @@ public static class DataService
         public float ExplosionForce;
         public float ExplosionUpwardsModifier;
         public float ExplosionMassThreshold;
+        public float WalkSpeed;
+        public float JumpPower;
+        public float RespawnTime;
     }
 
     [System.Serializable]
@@ -104,6 +107,15 @@ public static class DataService
             float upwardsMod = explosion ? explosion.upwardsModifier : 0f;
             float massThreshold = explosion ? explosion.massThreshold : 0f;
 
+            var pd = obj.GetComponent<PlayerDefaults>();
+            float walkSpeed = 16f, jumpPower = 50f, respawnTime = 1f;
+            if (pd != null)
+            {
+                walkSpeed = pd.walkSpeed;
+                jumpPower = pd.jumpPower;
+                respawnTime = pd.respawnTime;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = obj.name,
@@ -122,7 +134,10 @@ public static class DataService
                 ExplosionRadius = explosionRadius,
                 ExplosionForce = explosionForce,
                 ExplosionUpwardsModifier = upwardsMod,
-                ExplosionMassThreshold = massThreshold
+                ExplosionMassThreshold = massThreshold,
+                WalkSpeed = walkSpeed,
+                JumpPower = jumpPower,
+                RespawnTime = respawnTime
             });
         }
 
@@ -147,7 +162,10 @@ public static class DataService
                 ExplosionRadius = 0f,
                 ExplosionForce = 0f,
                 ExplosionUpwardsModifier = 0f,
-                ExplosionMassThreshold = 0f
+                ExplosionMassThreshold = 0f,
+                WalkSpeed = 16f,
+                JumpPower = 50f,
+                RespawnTime = 1f
             });
         }
 
@@ -221,6 +239,7 @@ public static class DataService
     {
         var objectMap = new Dictionary<string, GameObject>();
         List<GameObject> spawnedObjects = new List<GameObject>();
+        bool hasPlayerDefaults = false;
 
         foreach (var data in saveData.Objects)
         {
@@ -239,6 +258,9 @@ public static class DataService
                 if (obj == null) continue;
                 obj.name = data.Name;
             }
+
+            if (data.ClassName == "PlayerDefaults")
+                hasPlayerDefaults = true;
 
             objectMap[obj.name] = obj;
             spawnedObjects.Add(obj);
@@ -269,14 +291,45 @@ public static class DataService
 
             if (isMultiplayer && data.Name != "MapCamera")
             {
-                var parentSync = obj.GetComponent<ParentSync>();
-                if (parentSync == null)
-                    parentSync = obj.AddComponent<ParentSync>();
-                    
-                parentSync.ForceUpdate();
+                bool shouldNotSpawn = false;
 
-                NetworkServer.Spawn(obj);
+                Transform parent = obj.transform.parent;
+                Transform grandparent = parent != null ? parent.parent : null;
+
+                if (parent != null && parent.name == "ToolAttachmentPoint" &&
+                    obj.TryGetComponent<ObjectClass>(out var objClass) && objClass.className == "Tool" &&
+                    grandparent != null && grandparent.name == "PlayerDefaults" &&
+                    grandparent.TryGetComponent<ObjectClass>(out var gpClass) && gpClass.className == "PlayerDefaults")
+                {
+                    shouldNotSpawn = true;
+                }
+
+                NetworkIdentity parentNetId = parent ? parent.GetComponent<NetworkIdentity>() : null;
+                NetworkIdentity grandparentNetId = grandparent ? grandparent.GetComponent<NetworkIdentity>() : null;
+
+                if ((parentNetId != null && !parentNetId.isServer) || 
+                    (grandparentNetId != null && !grandparentNetId.isServer))
+                {
+                    shouldNotSpawn = true;
+                }
+
+                if (shouldNotSpawn)
+                {
+                    obj.SetActive(true);
+                    GameObject.Destroy(obj.GetComponent<NetworkIdentity>());
+                    GameObject.Destroy(obj.GetComponent<NetworkTransformUnreliable>());
+                }
+                else
+                {
+                    var parentSync = obj.GetComponent<ParentSync>();
+                    if (parentSync == null)
+                        parentSync = obj.AddComponent<ParentSync>();
+
+                    parentSync.ForceUpdate();
+                    NetworkServer.Spawn(obj);
+                }
             }
+
 
             if (data.Name == "MapCamera") continue;
 
@@ -324,10 +377,33 @@ public static class DataService
                 explosion.upwardsModifier = data.ExplosionUpwardsModifier;
                 explosion.massThreshold = data.ExplosionMassThreshold;
             }
+
+            var pd = obj.GetComponent<PlayerDefaults>();
+            if (pd != null)
+            {
+                pd.SetWalkSpeed(data.WalkSpeed);
+                pd.SetJumpPower(data.JumpPower);
+                pd.SetRespawnTime(data.RespawnTime);
+            }
+        }
+
+        if (!hasPlayerDefaults)
+        {
+            GameObject defaultPlayer = DataModel.SpawnClass("PlayerDefaults");
+            if (defaultPlayer != null)
+            {
+                defaultPlayer.name = "PlayerDefaults";
+                spawnedObjects.Add(defaultPlayer);
+                if (isMultiplayer)
+                {
+                    NetworkServer.Spawn(defaultPlayer);
+                }
+            }
         }
 
         return spawnedObjects.ToArray();
     }
+
 
     public static IEnumerator SaveToWebsite(string path, string uploadUrl)
     {

@@ -20,7 +20,9 @@ public static class DataModel
         "Fire",
         "Explosion",
         "Truss",
-        "Seat"
+        "Seat",
+        "PlayerDefaults",
+        "Folder"
     };
 
     public static GameObject LoadDataModel(string className)

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8906263505877172754}
   - component: {fileID: 7865812498200680413}
-  - component: {fileID: 951667663498806964}
   - component: {fileID: 643295846759517928}
   - component: {fileID: 5711135955653485009}
   - component: {fileID: 7087953135172135499}
@@ -23,6 +22,7 @@ GameObject:
   - component: {fileID: 3983610611232682823}
   - component: {fileID: -7982788365909478032}
   - component: {fileID: 2657330424297929122}
+  - component: {fileID: -4531204925535952024}
   m_Layer: 0
   m_Name: Player
   m_TagString: Object
@@ -75,24 +75,6 @@ CapsuleCollider:
   m_Height: 5.5
   m_Direction: 1
   m_Center: {x: 0, y: 2.6, z: 0}
---- !u!114 &951667663498806964
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2854521769487671702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6d7464efb7ee8d58fb207f9070e1206, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  isStudio: 0
-  speed: 8
-  jumpForce: 8
 --- !u!114 &643295846759517928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,6 +371,24 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   parentNetId: 0
+--- !u!114 &-4531204925535952024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2854521769487671702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6d7464efb7ee8d58fb207f9070e1206, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  isStudio: 0
+  speed: 8
+  jumpForce: 8
 --- !u!1 &4271057839239049545
 GameObject:
   m_ObjectHideFlags: 0

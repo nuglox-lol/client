@@ -4,8 +4,8 @@ using UnityEngine;
 public class PlayerMovement : NetworkBehaviour
 {
     public bool isStudio;
-    public float speed = 5f;
-    public float jumpForce = 5f;
+    public float speed = 8f;
+    public float jumpForce = 8f;
 
     private Transform cam;
     private Animator animator;

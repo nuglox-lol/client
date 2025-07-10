@@ -286,22 +286,11 @@ public class StudioUI : MonoBehaviour
         ImGui.SetNextWindowSize(new Vector2(panelWidth, windowHeight));
         ImGui.Begin("Properties", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse);
         ImGui.BeginChild("Props", new Vector2(0, 0), true);
+
         if (selectedObject != null)
         {
             ImGui.Text("Object Properties");
             ImGui.Spacing();
-
-            /*string GetUniqueName(string baseName)
-            {
-                int suffix = 1;
-                string newName = baseName;
-                while (GameObject.Find(newName) != null)
-                {
-                    newName = $"{baseName}-{suffix}";
-                    suffix++;
-                }
-                return newName;
-            }*/
 
             if (ImGui.InputText("Name", ref selectedObjectName, 256))
             {
@@ -424,7 +413,7 @@ public class StudioUI : MonoBehaviour
                         explosion.massThreshold = threshold;
                 }
             }
-            
+
             if (selectedObject.GetComponent<ObjectClass>().className == "Script")
             {
                 ImGui.Separator();
@@ -441,6 +430,25 @@ public class StudioUI : MonoBehaviour
                 }
             }
 
+            if (selectedObject.GetComponent<ObjectClass>().className == "PlayerDefaults")
+            {
+                var playerDefaults = selectedObject.GetComponent<PlayerDefaults>();
+                ImGui.Separator();
+                ImGui.Text("PlayerDefaults Settings");
+
+                float health = playerDefaults.GetMaxHealth();
+                if (ImGui.DragFloat("Max Health", ref health, 1f, 1f, 1000f)) playerDefaults.SetMaxHealth(health);
+
+                float walk = playerDefaults.GetWalkSpeed();
+                if (ImGui.DragFloat("WalkSpeed", ref walk, 0.1f, 0f, 100f)) playerDefaults.SetWalkSpeed(walk);
+
+                float jump = playerDefaults.GetJumpPower();
+                if (ImGui.DragFloat("Jump Power", ref jump, 0.1f, 0f, 100f)) playerDefaults.SetJumpPower(jump);
+
+                float respawn = playerDefaults.GetRespawnTime();
+                if (ImGui.DragFloat("Respawn Time", ref respawn, 0.1f, 0f, 60f)) playerDefaults.SetRespawnTime(respawn);
+            }
+
             if (selectedObject.transform.parent != null)
             {
                 if (ImGui.Button("Unparent")) selectedObject.transform.SetParent(null);
@@ -450,8 +458,10 @@ public class StudioUI : MonoBehaviour
         {
             ImGui.Text("No object selected");
         }
+
         ImGui.EndChild();
         ImGui.End();
+
 
         io.WantCaptureMouse = ImGui.IsWindowHovered() || ImGui.IsAnyItemActive();
         io.WantCaptureKeyboard = io.WantCaptureMouse;
