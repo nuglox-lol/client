@@ -146,7 +146,9 @@ public class InstanceDatamodel
 				renderer.material.color = value;
 				OnPropertyChanged("Color");
 			}
-			//go.GetComponent<ColorSync>().SetColor(value);
+			if(go.GetComponent<ColorSync>() != null){
+				go.GetComponent<ColorSync>().SetColor(value);
+			}
 		}
 	}
 

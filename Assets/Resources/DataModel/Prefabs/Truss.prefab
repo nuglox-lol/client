@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1431025453766145969}
   - component: {fileID: 8534815396610838791}
   - component: {fileID: 4777693834667166037}
+  - component: {fileID: 5830389135869731447}
   m_Layer: 0
   m_Name: Truss
   m_TagString: Object
@@ -188,3 +189,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ee4da198b507727b7d8b1dbe63a0396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  detectionRadius: 1
+--- !u!114 &5830389135869731447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274001335075450435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c595536dd8e0b5a4ba124b04a4a4de50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  parentNetId: 0

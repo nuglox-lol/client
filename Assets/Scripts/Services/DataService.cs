@@ -268,7 +268,15 @@ public static class DataService
             }
 
             if (isMultiplayer && data.Name != "MapCamera")
+            {
+                var parentSync = obj.GetComponent<ParentSync>();
+                if (parentSync == null)
+                    parentSync = obj.AddComponent<ParentSync>();
+                    
+                parentSync.ForceUpdate();
+
                 NetworkServer.Spawn(obj);
+            }
 
             if (data.Name == "MapCamera") continue;
 

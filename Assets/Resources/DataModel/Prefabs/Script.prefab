@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -481924063383719710}
   - component: {fileID: 1633976304263532986}
   - component: {fileID: 5393513367341826914}
+  - component: {fileID: -3311449337619441758}
   m_Layer: 0
   m_Name: Script
   m_TagString: Object
@@ -114,3 +115,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ee4da198b507727b7d8b1dbe63a0396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  detectionRadius: 1
+--- !u!114 &-3311449337619441758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4957806643763680526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c595536dd8e0b5a4ba124b04a4a4de50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  parentNetId: 0

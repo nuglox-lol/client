@@ -459,6 +459,7 @@
 "Assets/Scripts/Engine/Network/NetworkChat.cs"
 "Assets/Scripts/Engine/Network/NetworkTransformExcludeOwner.cs"
 "Assets/Scripts/Engine/Network/TestManager.cs"
+"Assets/Scripts/Engine/ParentSync.cs"
 "Assets/Scripts/Engine/Rendering/MeshTiling.cs"
 "Assets/Scripts/Engine/Rendering/PlayerUIRefresher.cs"
 "Assets/Scripts/Engine/Rendering/StudioRuntimeRenderer.cs"
