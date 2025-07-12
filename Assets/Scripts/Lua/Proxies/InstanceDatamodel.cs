@@ -33,7 +33,40 @@ public class InstanceDatamodel
 			go.AddComponent<TouchedHandler>();
 		}
 	}
-	
+
+	public object this[string key]
+	{
+		get
+		{
+			if (go == null || go.transform == null)
+				return null;
+
+			Transform childTransform = go.transform.Find(key);
+			if (childTransform == null)
+				throw new Exception($"Child '{key}' not found.");
+
+			GameObject childGO = childTransform.gameObject;
+			ObjectClass oc = childGO.GetComponent<ObjectClass>();
+
+			if (oc != null && !string.IsNullOrEmpty(oc.className))
+			{
+				switch (oc.className)
+				{
+					case "Tool": return new InstanceTool(childGO, luaScript);
+					case "Player": return new InstancePlayer(childGO);
+					case "Explosion": return new InstanceExplosion(childGO);
+					default: return new InstanceDatamodel(childGO, luaScript);
+				}
+			}
+
+			return new InstanceDatamodel(childGO, luaScript);
+		}
+		set
+		{
+			throw new NotSupportedException("Setting children via indexer is not supported.");
+		}
+	}
+
 	public float Mass
 	{
 		get
@@ -285,6 +318,8 @@ public class InstanceDatamodel
 	                    return new InstanceTool(parentGO, luaScript);
 	                case "Player":
 	                    return new InstancePlayer(parentGO);
+	                case "Explosion":
+	                	return new InstanceExplosion(parentGO);
 	                default:
 	                    return new InstanceDatamodel(parentGO, luaScript);
 	            }

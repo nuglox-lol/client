@@ -22,41 +22,33 @@ public class ScriptService : NetworkBehaviour
     private Dictionary<string, InstanceDatamodel> trackedInstances = new();
     private HashSet<string> currentFrameKeys = new();
 
-    [Command]
-    public void CmdRunCodeOnServer(string luaCode)
-    {
-        Debug.Log("Received Lua code from client, scheduling to run on server when ready.");
-
-        StartCoroutine(RunScriptWhenReady(luaCode));
-    }
-
     public void Init(Dictionary<string, object> globals = null)
     {
         script = new Script();
         UserData.RegisterAssembly();
-        UserData.RegisterType<GameObject>();
-        UserData.RegisterType<Transform>();
-        UserData.RegisterType<Vector4>();
-        UserData.RegisterType<Vector3>();
-        UserData.RegisterType<Vector2>();
-        UserData.RegisterType<Color>();
-        UserData.RegisterType<ColorSync>();
-        UserData.RegisterType<LuaVector2>();
-        UserData.RegisterType<LuaVector3>();
-        UserData.RegisterType<LuaVector4>();
-        UserData.RegisterType<LuaQuaternion>();
-        UserData.RegisterType<LuaThumbnailGenerator>();
-        UserData.RegisterType<LuaModelService>();
-        UserData.RegisterType<LuaDataService>();
-        UserData.RegisterType<LuaColor3>();
-        UserData.RegisterType<LuaEvent>();
-        UserData.RegisterType<InstanceDatamodel>();
-        UserData.RegisterType<InstanceRigidbody>();
-        UserData.RegisterType<InstancePlayer>();
-        UserData.RegisterType<TouchedHandler>();
-        UserData.RegisterType<LuaUIService>();
-        UserData.RegisterType<LuaImGui>();
-        UserData.RegisterType<LuaTweenService>();
+        UserData.RegisterType<GameObject>(InteropAccessMode.Default);
+        UserData.RegisterType<Transform>(InteropAccessMode.Default);
+        UserData.RegisterType<Vector4>(InteropAccessMode.Default);
+        UserData.RegisterType<Vector3>(InteropAccessMode.Default);
+        UserData.RegisterType<Vector2>(InteropAccessMode.Default);
+        UserData.RegisterType<Color>(InteropAccessMode.Default);
+        UserData.RegisterType<ColorSync>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaVector2>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaVector3>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaVector4>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaQuaternion>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaThumbnailGenerator>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaModelService>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaDataService>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaColor3>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaEvent>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceDatamodel>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceRigidbody>(InteropAccessMode.Default);
+        UserData.RegisterType<InstancePlayer>(InteropAccessMode.Default);
+        UserData.RegisterType<TouchedHandler>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaUIService>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaImGui>(InteropAccessMode.Default);
+        UserData.RegisterType<LuaTweenService>(InteropAccessMode.Default);
 
         DynValue instanceNewFunc = DynValue.NewCallback((context, args) =>
         {
@@ -294,23 +286,11 @@ public class ScriptService : NetworkBehaviour
                 }
             }
         }
-
-        script.Globals["SendCodeToServer"] = (Action<string>)((code) =>
-        {
-            if (!isLocalPlayer)
-            {
-                Debug.LogWarning("SendCodeToServer can only be called by the local player.");
-                return;
-            }
-
-            CmdRunCodeOnServer(code);
-        });
     }
 
     private void Start()
     {
         InvokeRepeating("UpdateWorkspaceTable", 0f, 1f);
-        Debug.Log($"{gameObject.name} netId: {netIdentity.netId}");
     }
 
     public IEnumerator RunScriptWhenReady(string luaCode)
@@ -482,7 +462,6 @@ public class ScriptService : NetworkBehaviour
         lastWorkspaceCount = workspaceTable.Keys.Count();
         workspaceInitialized = true;
     }
-
 
     private void PrintToConsole(object obj)
     {

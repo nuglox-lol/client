@@ -13,6 +13,12 @@ public class ShowTools : MonoBehaviour
     private GameObject toolUIPrefab;
     private Transform playerTransform;
     private List<Button> toolButtons = new List<Button>();
+    private List<Outline> toolOutlines = new List<Outline>();
+
+    private Color enabledOutlineColor = Color.blue;
+    private Color disabledOutlineColor = Color.black;
+
+    private int previousToolCount = -1;
 
     private void Awake()
     {
@@ -30,7 +36,21 @@ public class ShowTools : MonoBehaviour
         while (true)
         {
             FindPlayer();
-            UpdateTools();
+
+            if (playerTransform != null)
+            {
+                Transform attachmentPoint = playerTransform.Find("LeftArm/ToolAttachmentPoint");
+                if (attachmentPoint != null)
+                {
+                    int currentCount = attachmentPoint.childCount;
+                    if (currentCount != previousToolCount)
+                    {
+                        previousToolCount = currentCount;
+                        UpdateTools();
+                    }
+                }
+            }
+
             yield return new WaitForSeconds(0.5f);
         }
     }
@@ -69,6 +89,7 @@ public class ShowTools : MonoBehaviour
         }
 
         toolButtons.Clear();
+        toolOutlines.Clear();
 
         int count = 0;
         foreach (Transform tool in attachmentPoint)
@@ -86,8 +107,7 @@ public class ShowTools : MonoBehaviour
             if (outline == null)
                 outline = toolUI.AddComponent<Outline>();
 
-            bool childrenDisabled = AreChildrenDisabled(tool);
-            outline.enabled = childrenDisabled;
+            toolOutlines.Add(outline);
 
             Button button = toolUI.GetComponent<Button>();
             if (button != null)
@@ -95,20 +115,21 @@ public class ShowTools : MonoBehaviour
                 button.onClick.RemoveAllListeners();
                 Transform capturedTool = tool;
 
+                SetToolState(capturedTool, false, outline);
+
                 button.onClick.AddListener(() =>
                 {
-                    bool disable = !AreChildrenDisabled(capturedTool);
-                    ToggleChildren(capturedTool, disable);
-                    outline.enabled = disable;
+                    bool currentlyDisabled = AreChildrenDisabled(capturedTool);
 
-                    ToolComponent toolComponent = capturedTool.GetComponent<ToolComponent>();
-                    if (toolComponent != null)
+                    if (currentlyDisabled)
                     {
-                        toolComponent.IsDisabled = disable;
+                        DisableAllToolsExcept(capturedTool);
+                        SetToolState(capturedTool, true, outline);
                     }
-
-                    if (disable)
-                        ResetAnimatorToIdle(capturedTool);
+                    else
+                    {
+                        SetToolState(capturedTool, false, outline);
+                    }
                 });
 
                 toolButtons.Add(button);
@@ -118,12 +139,46 @@ public class ShowTools : MonoBehaviour
         }
     }
 
-    private void ToggleChildren(Transform tool, bool disable)
+    private void DisableAllToolsExcept(Transform exception)
+    {
+        Transform attachmentPoint = playerTransform.Find("LeftArm/ToolAttachmentPoint");
+        if (attachmentPoint == null) return;
+
+        int index = 0;
+        foreach (Transform tool in attachmentPoint)
+        {
+            if (tool == exception)
+            {
+                index++;
+                continue;
+            }
+
+            if (index < toolOutlines.Count)
+            {
+                SetToolState(tool, false, toolOutlines[index]);
+            }
+            index++;
+        }
+    }
+
+    private void SetToolState(Transform tool, bool enabled, Outline outline)
     {
         foreach (Transform child in tool)
         {
-            child.gameObject.SetActive(!disable);
+            child.gameObject.SetActive(enabled);
         }
+
+        outline.enabled = enabled;
+        outline.effectColor = enabled ? enabledOutlineColor : disabledOutlineColor;
+
+        ToolComponent toolComponent = tool.GetComponent<ToolComponent>();
+        if (toolComponent != null)
+        {
+            toolComponent.IsDisabled = !enabled;
+        }
+
+        if (!enabled)
+            ResetAnimatorToIdle(tool);
     }
 
     private bool AreChildrenDisabled(Transform tool)

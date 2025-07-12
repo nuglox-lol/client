@@ -6,15 +6,20 @@ using UnityEngine.SceneManagement;
 using Dummiesman;
 using System;
 using System.IO;
+using Mirror;
 
 [MoonSharpUserData]
 public class InstancePlayer : InstanceDatamodel
 {
     private int characterAppearanceId;
 
+    private NetworkIdentity networkIdentity;
+
     public InstancePlayer(GameObject gameObject, Script lua = null) : base(gameObject, lua) {
         if(gameObject.GetComponent<ObjectClass>().className == "Player")
             gameObject.name = gameObject.GetComponent<Player>().username;
+        if(gameObject.GetComponent<NetworkIdentity>())
+            networkIdentity = gameObject.GetComponent<NetworkIdentity>();
     }
 
     public int UserId
@@ -23,7 +28,7 @@ public class InstancePlayer : InstanceDatamodel
         set { Transform.GetComponent<Player>().userID = value; }
     }
 
-    public ulong NetworkId { get; private set; }
+    public ulong NetworkId => networkIdentity != null ? networkIdentity.netId : 0;
 
     public int NetID => (int)NetworkId;
 
@@ -74,6 +79,11 @@ public class InstancePlayer : InstanceDatamodel
             },
             error => Debug.LogError($"Failed to load character appearance: {error}")
         );
+    }
+
+    public void TakeDamage(int damage)
+    {
+        Transform.GetComponent<Player>().health = Transform.GetComponent<Player>().health - damage;
     }
 
     private void ApplyFaceTexture(string imageUrl)

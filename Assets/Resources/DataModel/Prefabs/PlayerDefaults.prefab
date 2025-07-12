@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -6575443615871917422}
   - component: {fileID: 6528179764176784573}
   - component: {fileID: -9131819100380284374}
+  - component: {fileID: 6061162896481440251}
   m_Layer: 0
   m_Name: PlayerDefaults
   m_TagString: Object
@@ -86,3 +87,19 @@ MonoBehaviour:
   walkSpeed: 8
   jumpPower: 8
   respawnTime: 5
+--- !u!114 &6061162896481440251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3933645318877831748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c595536dd8e0b5a4ba124b04a4a4de50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  parentNetId: 0

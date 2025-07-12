@@ -199,6 +199,16 @@ public static class DataService
         }
     }
 
+    public static GameObject[] LoadFromString(string xml, bool isMultiplayer = false)
+    {
+        var serializer = new XmlSerializer(typeof(SaveData));
+        using (var reader = new StringReader(xml))
+        {
+            var saveData = (SaveData)serializer.Deserialize(reader);
+            return LoadFromSaveData(saveData, isMultiplayer);
+        }
+    }
+
     public static void LoadURL(string url, bool isMultiplayer = false)
     {
         RunCoroutine(LoadURLRoutine(url, isMultiplayer));
@@ -326,7 +336,12 @@ public static class DataService
                         parentSync = obj.AddComponent<ParentSync>();
 
                     parentSync.ForceUpdate();
-                    NetworkServer.Spawn(obj);
+                    if (NetworkServer.active)
+                    {
+                        NetworkServer.Spawn(obj);
+                    }else{
+                        continue;
+                    }
                 }
             }
 
@@ -404,7 +419,6 @@ public static class DataService
         return spawnedObjects.ToArray();
     }
 
-
     public static IEnumerator SaveToWebsite(string path, string uploadUrl)
     {
         Save(path);
@@ -417,6 +431,97 @@ public static class DataService
         using (UnityWebRequest www = UnityWebRequest.Post(uploadUrl, form))
         {
             yield return www.SendWebRequest();
+        }
+    }
+
+    public static string SaveModel(GameObject obj)
+    {
+        var saveData = new SaveData();
+        void Add(GameObject o)
+        {
+            if (o == null) return;
+            var classComp = o.GetComponent<ObjectClass>();
+            if (classComp == null) return;
+
+            var renderer = o.GetComponent<Renderer>();
+            Color objColor = renderer ? renderer.material.color : Color.white;
+
+            string luaScriptText = "";
+            bool isLocalScript = false;
+            var luaComp = o.GetComponent<ScriptInstanceMain>();
+            if (luaComp != null)
+            {
+                luaScriptText = luaComp.Script;
+                isLocalScript = luaComp.isLocalScript;
+            }
+
+            var rb = o.GetComponent<Rigidbody>();
+            bool anchored = rb == null;
+            bool gravity = rb != null ? rb.useGravity : false;
+            float mass = rb != null ? rb.mass : 1f;
+
+            var colliders = o.GetComponents<Collider>();
+            bool canCollide = true;
+            if (colliders.Length > 0)
+                canCollide = colliders[0].enabled;
+
+            var explosion = o.GetComponent<Explosion>();
+            float explosionRadius = explosion ? explosion.radius : 0f;
+            float explosionForce = explosion ? explosion.explosionForce : 0f;
+            float upwardsMod = explosion ? explosion.upwardsModifier : 0f;
+            float massThreshold = explosion ? explosion.massThreshold : 0f;
+
+            var pd = o.GetComponent<PlayerDefaults>();
+            float walkSpeed = 16f, jumpPower = 50f, respawnTime = 1f;
+            if (pd != null)
+            {
+                walkSpeed = pd.walkSpeed;
+                jumpPower = pd.jumpPower;
+                respawnTime = pd.respawnTime;
+            }
+
+            saveData.Objects.Add(new SavedObjectData
+            {
+                Name = o.name,
+                Position = new Vector3Serializable(o.transform.position),
+                Rotation = new Vector3Serializable(o.transform.eulerAngles),
+                Scale = new Vector3Serializable(o.transform.localScale),
+                Color = new ColorSerializable(objColor),
+                ClassName = classComp.className,
+                ScriptContent = luaScriptText,
+                ParentName = o.transform.parent ? o.transform.parent.name : null,
+                Anchored = anchored,
+                Gravity = gravity,
+                CanCollide = canCollide,
+                IsLocalScript = classComp.className == "Script" ? isLocalScript : false,
+                Mass = mass,
+                ExplosionRadius = explosionRadius,
+                ExplosionForce = explosionForce,
+                ExplosionUpwardsModifier = upwardsMod,
+                ExplosionMassThreshold = massThreshold,
+                WalkSpeed = walkSpeed,
+                JumpPower = jumpPower,
+                RespawnTime = respawnTime
+            });
+
+            foreach (Transform child in o.transform)
+                Add(child.gameObject);
+        }
+
+        Add(obj);
+
+        var serializer = new XmlSerializer(typeof(SaveData));
+        using var stringWriter = new StringWriter();
+        serializer.Serialize(stringWriter, saveData);
+        return stringWriter.ToString();
+    }
+
+    public static SaveData Deserialize(string xml)
+    {
+        XmlSerializer serializer = new XmlSerializer(typeof(SaveData));
+        using (StringReader reader = new StringReader(xml))
+        {
+            return (SaveData)serializer.Deserialize(reader);
         }
     }
 
