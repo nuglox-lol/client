@@ -388,6 +388,24 @@ public class StudioUI : MonoBehaviour
                 ImGui.Checkbox("Can Collide (No Collider)", ref dummy);
             }
 
+            if (selectedObject.GetComponent<ObjectClass>().className == "Text3D")
+            {
+                ImGui.Separator();
+                ImGui.Text("Text3D Settings");
+
+                var text3D = selectedObject.GetComponent<Text3DComponent>();
+                var text3DInput = selectedObject.GetComponent<Text3DComponent>().GetText() ?? "Label";
+
+                if (text3D != null)
+                {
+                    text3DInput = text3D.GetText();
+                    if (ImGui.InputText("Text", ref text3DInput, 256))
+                    {
+                        text3D.ChangeText(text3DInput);
+                    }
+                }
+            }
+
             if (selectedObject.GetComponent<ObjectClass>().className == "Explosion")
             {
                 ImGui.Separator();

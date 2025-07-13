@@ -32,6 +32,7 @@ public static class DataService
         public float WalkSpeed;
         public float JumpPower;
         public float RespawnTime;
+        public string Text3DText;
     }
 
     [System.Serializable]
@@ -116,6 +117,16 @@ public static class DataService
                 respawnTime = pd.respawnTime;
             }
 
+            string text3DText = null;
+            if (obj.GetComponent<ObjectClass>().className == "Text3D")
+            {
+                var text3D = obj.GetComponent<Text3DComponent>();
+                if (text3D != null)
+                {
+                    text3DText = text3D.GetText();
+                }
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = obj.name,
@@ -137,7 +148,8 @@ public static class DataService
                 ExplosionMassThreshold = massThreshold,
                 WalkSpeed = walkSpeed,
                 JumpPower = jumpPower,
-                RespawnTime = respawnTime
+                RespawnTime = respawnTime,
+                Text3DText = text3DText
             });
         }
 
@@ -393,6 +405,13 @@ public static class DataService
                 explosion.massThreshold = data.ExplosionMassThreshold;
             }
 
+            var text3D = obj.GetComponent<Text3DComponent>();
+            if(text3D != null)
+            {
+                    text3D.ChangeText(data.Text3DText ?? "");
+                    text3D.ChangeTextColor(data.Color.ToColor());
+            }
+
             var pd = obj.GetComponent<PlayerDefaults>();
             if (pd != null)
             {
@@ -480,6 +499,16 @@ public static class DataService
                 respawnTime = pd.respawnTime;
             }
 
+            string text3DText = null;
+            if (obj.GetComponent<ObjectClass>().className == "Text3D")
+            {
+                var text3D = obj.GetComponent<Text3DComponent>();
+                if (text3D != null)
+                {
+                    text3DText = text3D.GetText();
+                }
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = o.name,
@@ -501,7 +530,8 @@ public static class DataService
                 ExplosionMassThreshold = massThreshold,
                 WalkSpeed = walkSpeed,
                 JumpPower = jumpPower,
-                RespawnTime = respawnTime
+                RespawnTime = respawnTime,
+                Text3DText = text3DText
             });
 
             foreach (Transform child in o.transform)

@@ -22,7 +22,8 @@ public static class DataModel
         "Truss",
         "Seat",
         "PlayerDefaults",
-        "Folder"
+        "Folder",
+        "Text3D"
     };
 
     public static GameObject LoadDataModel(string className)

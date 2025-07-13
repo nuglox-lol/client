@@ -25,6 +25,7 @@ public class ToolComponent : NetworkBehaviour
     {
         if (isServer)
             pickupCooldown = 1f;
+            
         isEquipped = false;
     }
 
@@ -86,9 +87,11 @@ public class ToolComponent : NetworkBehaviour
         if (attachmentPoint == null) return;
 
         transform.SetParent(attachmentPoint, false);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
-        transform.localScale = Vector3.one;
+
+        transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+
+        float zPos = transform.localScale.y * 1.42857f;
+        transform.localPosition = new Vector3(0, 0, zPos);
 
         leftArm = playerRoot.transform.Find("LeftArm");
         animator = leftArm?.parent?.GetComponent<Animator>();

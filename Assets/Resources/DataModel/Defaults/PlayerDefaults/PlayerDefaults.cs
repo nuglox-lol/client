@@ -118,7 +118,9 @@ public class PlayerDefaults : NetworkBehaviour
                 }
 
                 if (model.transform.parent == null)
+                {
                     model.transform.SetParent(attachmentPoint);
+                }
 
                 //model.GetComponent<ParentSync>()?.ForceUpdate();
 
@@ -145,33 +147,7 @@ public class PlayerDefaults : NetworkBehaviour
     {
         return;
 
-        Player player = playerNetId.GetComponent<Player>();
-        if (player == null) return;
-
-        Transform attachmentPoint = player.transform.Find("LeftArm/ToolAttachmentPoint");
-        if (attachmentPoint == null)
-        {
-            Debug.LogWarning("ToolAttachmentPoint not found on player");
-            return;
-        }
-
-        foreach (string modelXml in xml)
-        {
-            GameObject[] models = DataService.LoadFromString(modelXml, false);
-            foreach(GameObject model in models)
-            {
-                if(model.name == "PlayerDefaults")
-                {
-                    GameObject.Destroy(model);
-                    return;
-                }
-                
-                if(model.transform.parent == null)
-                    model.transform.SetParent(attachmentPoint);
-
-                model.GetComponent<ParentSync>().ForceUpdate();
-            }
-        }
+        Debug.Log("geometry dash");
     }
 
     [Command]

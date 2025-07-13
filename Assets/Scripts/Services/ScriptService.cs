@@ -44,6 +44,7 @@ public class ScriptService : NetworkBehaviour
         UserData.RegisterType<LuaEvent>(InteropAccessMode.Default);
         UserData.RegisterType<InstanceDatamodel>(InteropAccessMode.Default);
         UserData.RegisterType<InstanceRigidbody>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceText3D>(InteropAccessMode.Default);
         UserData.RegisterType<InstancePlayer>(InteropAccessMode.Default);
         UserData.RegisterType<TouchedHandler>(InteropAccessMode.Default);
         UserData.RegisterType<LuaUIService>(InteropAccessMode.Default);
@@ -103,6 +104,12 @@ public class ScriptService : NetworkBehaviour
                         case "Player":
                             o = new InstancePlayer(gameObject);
                             break;
+                        case "Explosion":
+                            o = new InstanceExplosion(gameObject);
+                            break;
+                        case "Text3D":
+                            o = new InstanceText3D(gameObject);
+                            break;
                         default:
                             o = new InstanceDatamodel(gameObject);
                             break;
@@ -145,6 +152,12 @@ public class ScriptService : NetworkBehaviour
                             break;
                         case "Player":
                             o2 = new InstancePlayer(gameObject2);
+                            break;
+                        case "Explosion":
+                            o2 = new InstanceExplosion(gameObject);
+                            break;
+                        case "Text3D":
+                            o2 = new InstanceText3D(gameObject);
                             break;
                         default:
                             o2 = new InstanceDatamodel(gameObject2);
@@ -426,6 +439,7 @@ public class ScriptService : NetworkBehaviour
                     "Tool" => new InstanceTool(go, script),
                     "Part" => new InstanceDatamodel(go),
                     "Explosion" => new InstanceExplosion(go),
+                    "Text3D" => new InstanceText3D(go),
                     _ => new InstanceDatamodel(go)
                 };
 
