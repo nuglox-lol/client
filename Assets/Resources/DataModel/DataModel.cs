@@ -12,7 +12,7 @@ public static class DataModel
         "Part",
         "Script",
         "Player",
-        "BackgroundPlayer",
+        "NPC",
         "BallPart",
         "CylinderPart",
         "Tool",
@@ -23,7 +23,8 @@ public static class DataModel
         "Seat",
         "PlayerDefaults",
         "Folder",
-        "Text3D"
+        "Text3D",
+        "ToolAttachmentPoint"
     };
 
     public static GameObject LoadDataModel(string className)

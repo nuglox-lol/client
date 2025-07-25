@@ -1,0 +1,54 @@
+:root {
+    --bottomBarHeight: 70px;
+}
+
+#bottomBar {
+    position: fixed;
+    display: flex;
+    bottom: 0;
+    width: 100%;
+    height: var(--bottomBarHeight);
+    backdrop-filter: blur(24px);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 99999999999999999;
+}
+
+#bottomBar button {
+    height: var(--bottomBarHeight);
+    background: none;
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+}
+#bottomBar button i {
+    font-size: 22px;
+}
+#bottomBar button.selected {
+    font-weight: 600;
+}
+#bottomBar button.selected i {
+    font-size: 25px;
+    margin-bottom: -5px;
+}
+
+.bottomBarMargin {
+    width: 100%;
+    height: var(--bottomBarHeight);
+}
+
+@keyframes bottomBarSpawn {
+    0% {
+        bottom: calc(0px - var(--bottomBarHeight));
+    }
+}
+@keyframes bottomBarButtonSpawn {
+    0% {
+        margin-top: calc(0px + var(--bottomBarHeight));
+    }
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/stuff/main.css" rel="stylesheet">
+    <link href="../css/stuff/bottomBar.css" rel="stylesheet">
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <style>
+    .gamesList .pic {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+    }
+
+    .gamesList .scroll-container {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .gamesList .item {
+        display: inline-block;
+        margin-right: 1rem;
+    }
+    </style>
+</head>
+<body data-bs-theme="dark">
+    <h1 style="margin: 30px;text-align: center;">
+        Games
+    </h1>
+    <div class="container">
+        <h3>Recently Created</h3>
+        <div class="container gamesList">
+            <div class="scroll-container">
+                <div class="item">
+                    <img src="https://nuglox.xyz/avatar/render/images/1_headshot.png" class="pic border rounded">
+                    <div class="mt-2">Road to the datastorm</div>
+                    <div class="small">by TheTulpy</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottomBarMargin"></div>
+    <script src="../js/stuff/main.js"></script> 
+    <script src="../js/stuff/authenticator.js"></script> 
+</body>
+</html>

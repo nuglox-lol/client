@@ -43,23 +43,9 @@ public class InstanceDatamodel
 
 			Transform childTransform = go.transform.Find(key);
 			if (childTransform == null)
-				throw new Exception($"Child '{key}' not found.");
+				return null;
 
-			GameObject childGO = childTransform.gameObject;
-			ObjectClass oc = childGO.GetComponent<ObjectClass>();
-
-			if (oc != null && !string.IsNullOrEmpty(oc.className))
-			{
-				switch (oc.className)
-				{
-					case "Tool": return new InstanceTool(childGO, luaScript);
-					case "Player": return new InstancePlayer(childGO);
-					case "Explosion": return new InstanceExplosion(childGO);
-					default: return new InstanceDatamodel(childGO, luaScript);
-				}
-			}
-
-			return new InstanceDatamodel(childGO, luaScript);
+			return LuaInstance.GetCorrectInstance(childTransform.gameObject, luaScript);
 		}
 		set
 		{
@@ -94,7 +80,6 @@ public class InstanceDatamodel
 		}
 	}
 
-
 	public string Class 
 	{
 		get => go.transform.GetComponent<ObjectClass>().className;
@@ -102,14 +87,7 @@ public class InstanceDatamodel
 
 	public Vector3 Position
 	{
-		get
-		{
-			if (!(go != null))
-			{
-				return Vector3.zero;
-			}
-			return go.transform.position;
-		}
+		get => go != null ? go.transform.position : Vector3.zero;
 		set
 		{
 			if (go != null)
@@ -122,14 +100,7 @@ public class InstanceDatamodel
 
 	public Vector3 Rotation
 	{
-		get
-		{
-			if (!(go != null))
-			{
-				return Vector3.zero;
-			}
-			return go.transform.eulerAngles;
-		}
+		get => go != null ? go.transform.eulerAngles : Vector3.zero;
 		set
 		{
 			if (go != null)
@@ -142,14 +113,7 @@ public class InstanceDatamodel
 
 	public Vector3 LocalScale
 	{
-		get
-		{
-			if (!(go != null))
-			{
-				return Vector3.zero;
-			}
-			return go.transform.localScale;
-		}
+		get => go != null ? go.transform.localScale : Vector3.zero;
 		set
 		{
 			if (go != null)
@@ -165,11 +129,7 @@ public class InstanceDatamodel
 		get
 		{
 			Renderer renderer = go?.GetComponent<Renderer>();
-			if (!(renderer != null))
-			{
-				return Color.white;
-			}
-			return renderer.material.color;
+			return renderer != null ? renderer.material.color : Color.white;
 		}
 		set
 		{
@@ -179,7 +139,8 @@ public class InstanceDatamodel
 				renderer.material.color = value;
 				OnPropertyChanged("Color");
 			}
-			if(go.GetComponent<ColorSync>() != null){
+			if (go.GetComponent<ColorSync>() != null)
+			{
 				go.GetComponent<ColorSync>().SetColor(value);
 			}
 		}
@@ -190,11 +151,7 @@ public class InstanceDatamodel
 		get
 		{
 			Renderer renderer = go?.GetComponent<Renderer>();
-			if (renderer != null)
-			{
-				return 1f - renderer.material.color.a;
-			}
-			return 0f;
+			return renderer != null ? 1f - renderer.material.color.a : 0f;
 		}
 		set
 		{
@@ -211,11 +168,7 @@ public class InstanceDatamodel
 		get
 		{
 			Rigidbody rigidbody = go?.GetComponent<Rigidbody>();
-			if (rigidbody != null)
-			{
-				return rigidbody.isKinematic;
-			}
-			return false;
+			return rigidbody != null && rigidbody.isKinematic;
 		}
 		set
 		{
@@ -234,14 +187,7 @@ public class InstanceDatamodel
 
 	public bool CanCollide
 	{
-		get
-		{
-			if (selfCollider != null)
-			{
-				return selfCollider.enabled;
-			}
-			return false;
-		}
+		get => selfCollider != null && selfCollider.enabled;
 		set
 		{
 			if (selfCollider != null)
@@ -254,14 +200,7 @@ public class InstanceDatamodel
 
 	public bool Active
 	{
-		get
-		{
-			if (go != null)
-			{
-				return go.activeSelf;
-			}
-			return false;
-		}
+		get => go != null && go.activeSelf;
 		set
 		{
 			if (go != null)
@@ -274,18 +213,7 @@ public class InstanceDatamodel
 
 	public string Name
 	{
-		get
-		{
-			if (go == null)
-			{
-				return string.Empty;
-			}
-			if (string.IsNullOrEmpty(go.name))
-			{
-				return string.Empty;
-			}
-			return go.name;
-		}
+		get => go != null ? go.name ?? string.Empty : string.Empty;
 		set
 		{
 			if (go != null)
@@ -298,84 +226,40 @@ public class InstanceDatamodel
 
 	public InstanceDatamodel Parent
 	{
-	    get
-	    {
-	        if (go == null)
-	            return null;
-
-	        Transform parent = go.transform.parent;
-	        if (parent == null)
-	            return null;
-
-	        GameObject parentGO = parent.gameObject;
-	        ObjectClass oc = parentGO.GetComponent<ObjectClass>();
-
-	        if (oc != null && !string.IsNullOrEmpty(oc.className))
-	        {
-	            switch (oc.className)
-	            {
-	                case "Tool":
-	                    return new InstanceTool(parentGO, luaScript);
-	                case "Player":
-	                    return new InstancePlayer(parentGO);
-	                case "Explosion":
-	                	return new InstanceExplosion(parentGO);
-	                default:
-	                    return new InstanceDatamodel(parentGO, luaScript);
-	            }
-	        }
-
-	        return new InstanceDatamodel(parentGO, luaScript);
-	    }
-	    set
-	    {
-	        if (go != null)
-	        {
-	            go.transform.parent = value?.Transform;
-	            OnPropertyChanged("Parent");
-	        }
-	    }
-	}
-
-	public Transform Transform
-	{
 		get
 		{
-			if (!(go != null))
+			if (go == null) return null;
+
+			Transform parent = go.transform.parent;
+			if (parent == null) return null;
+
+			return LuaInstance.GetCorrectInstance(parent.gameObject, luaScript) as InstanceDatamodel;
+		}
+		set
+		{
+			if (go != null)
 			{
-				return null;
+				go.transform.parent = value?.Transform;
+				OnPropertyChanged("Parent");
 			}
-			return go.transform;
 		}
 	}
+
+	public Transform Transform => go != null ? go.transform : null;
 
 	public InstanceRigidbody Rigidbody
 	{
 		get
 		{
-			if (go == null)
-			{
-				return null;
-			}
+			if (go == null) return null;
 			Rigidbody component = go.GetComponent<Rigidbody>();
-			if (!(component != null))
-			{
-				return null;
-			}
-			return new InstanceRigidbody(component);
+			return component != null ? new InstanceRigidbody(component) : null;
 		}
 	}
 
 	public int Layer
 	{
-		get
-		{
-			if (!(go != null))
-			{
-				return 0;
-			}
-			return go.layer;
-		}
+		get => go != null ? go.layer : 0;
 		set
 		{
 			if (go != null)
@@ -406,14 +290,8 @@ public class InstanceDatamodel
 
 	public event Action<string> Changed
 	{
-		add
-		{
-			changedHandlers += value;
-		}
-		remove
-		{
-			changedHandlers -= value;
-		}
+		add => changedHandlers += value;
+		remove => changedHandlers -= value;
 	}
 
 	public void Destroy()
@@ -426,47 +304,31 @@ public class InstanceDatamodel
 
 	public InstanceDatamodel Clone(Vector3 position, Quaternion rotation)
 	{
-		if (go == null)
-		{
-			return null;
-		}
+		if (go == null) return null;
 		GameObject gameObject = UnityEngine.Object.Instantiate(go, position, rotation);
-		if (!(gameObject != null))
-		{
-			return null;
-		}
-		return new InstanceDatamodel(gameObject, luaScript);
+		return gameObject != null ? LuaInstance.GetCorrectInstance(gameObject, luaScript) as InstanceDatamodel : null;
 	}
 
 	private void OnPropertyChanged(string propertyName)
 	{
-		this.changedHandlers?.Invoke(propertyName);
+		changedHandlers?.Invoke(propertyName);
 	}
 
 	public InstanceDatamodel FindFirstChild(string name)
 	{
-		if (go == null)
-		{
-			return null;
-		}
+		if (go == null) return null;
 		Transform transform = go.transform.Find(name);
-		if (!(transform != null))
-		{
-			return null;
-		}
-		return new InstanceDatamodel(transform.gameObject, luaScript);
+		return transform != null ? LuaInstance.GetCorrectInstance(transform.gameObject, luaScript) as InstanceDatamodel : null;
 	}
 
 	public List<InstanceDatamodel> GetChildren()
 	{
 		List<InstanceDatamodel> list = new List<InstanceDatamodel>();
-		if (go == null)
-		{
-			return list;
-		}
+		if (go == null) return list;
 		foreach (Transform item in go.transform)
 		{
-			list.Add(new InstanceDatamodel(item.gameObject, luaScript));
+			var instance = LuaInstance.GetCorrectInstance(item.gameObject, luaScript) as InstanceDatamodel;
+			if (instance != null) list.Add(instance);
 		}
 		return list;
 	}
@@ -474,15 +336,15 @@ public class InstanceDatamodel
 	public List<InstanceDatamodel> GetDescendants()
 	{
 		List<InstanceDatamodel> list = new List<InstanceDatamodel>();
-		if (go == null)
-		{
-			return list;
-		}
+		if (go == null) return list;
 		foreach (Transform item in go.transform)
 		{
-			InstanceDatamodel instanceDatamodel = new InstanceDatamodel(item.gameObject, luaScript);
-			list.Add(instanceDatamodel);
-			list.AddRange(instanceDatamodel.GetDescendants());
+			var instance = LuaInstance.GetCorrectInstance(item.gameObject, luaScript) as InstanceDatamodel;
+			if (instance != null)
+			{
+				list.Add(instance);
+				list.AddRange(instance.GetDescendants());
+			}
 		}
 		return list;
 	}
@@ -491,10 +353,10 @@ public class InstanceDatamodel
 	{
 		for (float num = 0f; num < timeoutSeconds; num += Time.deltaTime)
 		{
-			InstanceDatamodel instanceDatamodel = FindFirstChild(childName);
-			if (instanceDatamodel != null)
+			InstanceDatamodel instance = FindFirstChild(childName);
+			if (instance != null)
 			{
-				return instanceDatamodel;
+				return instance;
 			}
 		}
 		return null;
@@ -502,16 +364,9 @@ public class InstanceDatamodel
 
 	public bool IsA(string className)
 	{
-		if (go == null)
-		{
-			return false;
-		}
+		if (go == null) return false;
 		ObjectClass component = go.GetComponent<ObjectClass>();
-		if (component != null)
-		{
-			return component.className == className;
-		}
-		return false;
+		return component != null && component.className == className;
 	}
 
 	private void SetMaterialTransparent(Material mat)
@@ -541,10 +396,7 @@ public class InstanceDatamodel
 
 	public void PlayAudio(string url, float radius = 10f, bool isLoop = false)
 	{
-		if (go == null)
-		{
-			return;
-		}
+		if (go == null) return;
 		AudioSource audioSource = go.GetComponent<AudioSource>();
 		if (audioSource == null)
 		{
@@ -573,14 +425,12 @@ public class InstanceDatamodel
 
 	public void StopAudio()
 	{
-		if (!(go == null))
+		if (go == null) return;
+		AudioSource component = go.GetComponent<AudioSource>();
+		if (component != null)
 		{
-			AudioSource component = go.GetComponent<AudioSource>();
-			if (component != null)
-			{
-				component.Stop();
-				UnityEngine.Object.Destroy(component);
-			}
+			component.Stop();
+			UnityEngine.Object.Destroy(component);
 		}
 	}
 }

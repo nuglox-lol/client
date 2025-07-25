@@ -4,19 +4,19 @@ using System.Collections;
 
 public class ParentSync : NetworkBehaviour
 {
-    // thanks mirror i have to use this shit system
-
     [SyncVar(hook = nameof(OnParentChanged))]
     public uint parentNetId;
+
+    Transform lastParent;
 
     public override void OnStartServer()
     {
         UpdateParentNetId();
+        lastParent = transform.parent;
     }
 
     private void UpdateParentNetId()
     {
-        //if (!isServer) return;
         var parentIdentity = transform.parent ? transform.parent.GetComponent<NetworkIdentity>() : null;
         parentNetId = parentIdentity != null ? parentIdentity.netId : 0;
     }
@@ -25,8 +25,8 @@ public class ParentSync : NetworkBehaviour
     public void ForceUpdate()
     {
         UpdateParentNetId();
+        lastParent = transform.parent;
     }
-
 
     private void OnParentChanged(uint oldNetId, uint newNetId)
     {
@@ -56,6 +56,10 @@ public class ParentSync : NetworkBehaviour
     [ServerCallback]
     private void LateUpdate()
     {
-        UpdateParentNetId();
+        if (transform.parent != lastParent)
+        {
+            UpdateParentNetId();
+            lastParent = transform.parent;
+        }
     }
 }

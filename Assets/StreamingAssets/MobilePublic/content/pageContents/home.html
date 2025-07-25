@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/stuff/main.css" rel="stylesheet">
+    <link href="../css/stuff/bottomBar.css" rel="stylesheet">
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <style>
+    .friendsList .profile-pic {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+    }
+
+    .friendsList .scroll-container {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .friendsList .profile-item {
+        display: inline-block;
+        text-align: center;
+        margin-right: 1rem;
+    }
+    </style>
+</head>
+<body data-bs-theme="dark">
+    <h1 style="margin: 30px;margin-bottom: 0;text-align: center;">Home</h1>
+    <h4 style="margin: 30px;margin-top: 5px;text-align: center;">Welcome back, <strong>{{user.username}}</strong>!</h4>
+    <div class="container">
+        <h3>Friends <button class="btn btn-outline-secondary" onclick="loadPage('friends');">See All</button></h3>
+        <!--span>You have no friends, <i>yet :)</i>.</span-->
+        <div class="container friendsList">
+            <div class="scroll-container">
+                <div class="profile-item">
+                    <img src="https://nuglox.xyz/avatar/render/images/1_headshot.png" class="border rounded profile-pic">
+                    <div class="mt-2 small">theoneandonlyjxd</div>
+                </div>
+
+                <div class="profile-item">
+                    <img src="https://nuglox.xyz/avatar/render/images/2_headshot.png" class="border rounded profile-pic">
+                    <div class="mt-2 small">NiceYomi</div>
+                </div>
+
+                <div class="profile-item">
+                    <img src="https://nuglox.xyz/avatar/render/images/6_headshot.png" class="border rounded profile-pic">
+                    <div class="mt-2 small">NUGLOX</div>
+                </div>
+            </div>
+        </div>
+        <script>
+        let authsetintervalthing = setInterval(() => {
+            if(authSet) {
+                clearInterval(authsetintervalthing);
+            }
+        }, 100);
+        </script>
+        <h3 style="margin-top: 20px;">Recently Played</h3>
+        kevin's game
+        <h3 style="margin-top: 20px;">Most Played</h3>
+        gurt: yo
+        <h3 style="margin-top: 20px;">Still don't know what to play?</h3>
+        <button class="btn btn-primary" onclick="loadPage('games');">Check out the games page!</button>
+    </div>
+    <div class="bottomBarMargin"></div>
+    <script src="../js/stuff/main.js"></script> 
+    <script src="../js/stuff/authenticator.js"></script> 
+</body>
+</html>

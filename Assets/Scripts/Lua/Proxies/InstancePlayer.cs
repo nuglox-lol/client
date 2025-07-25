@@ -12,13 +12,13 @@ using Mirror;
 public class InstancePlayer : InstanceDatamodel
 {
     private int characterAppearanceId;
-
     private NetworkIdentity networkIdentity;
 
-    public InstancePlayer(GameObject gameObject, Script lua = null) : base(gameObject, lua) {
-        if(gameObject.GetComponent<ObjectClass>().className == "Player")
+    public InstancePlayer(GameObject gameObject, Script lua = null) : base(gameObject, lua)
+    {
+        if (gameObject.GetComponent<ObjectClass>().className == "Player")
             gameObject.name = gameObject.GetComponent<Player>().username;
-        if(gameObject.GetComponent<NetworkIdentity>())
+        if (gameObject.GetComponent<NetworkIdentity>())
             networkIdentity = gameObject.GetComponent<NetworkIdentity>();
     }
 
@@ -36,6 +36,52 @@ public class InstancePlayer : InstanceDatamodel
     {
         get => Transform.GetComponent<Player>().health;
         set { Transform.GetComponent<Player>().health = value; }
+    }
+
+    public int WalkSpeed
+    {
+        get => (int)Transform.GetComponent<PlayerMovement>().speed;
+        set
+        {
+            Transform.GetComponent<PlayerMovement>().speed = value;
+            if (NetworkServer.active && networkIdentity != null)
+            {
+                TargetApplyWalkSpeed(networkIdentity.connectionToClient, value);
+            }
+        }
+    }
+
+    [TargetRpc]
+    void TargetApplyWalkSpeed(NetworkConnection target, int speed)
+    {
+        var movement = Transform.GetComponent<PlayerMovement>();
+        if (movement != null)
+        {
+            movement.speed = speed;
+        }
+    }
+
+    public int JumpForce
+    {
+        get => (int)Transform.GetComponent<PlayerMovement>().jumpForce;
+        set
+        {
+            Transform.GetComponent<PlayerMovement>().jumpForce = value;
+            if (NetworkServer.active && networkIdentity != null)
+            {
+                TargetApplyJumpForce(networkIdentity.connectionToClient, value);
+            }
+        }
+    }
+
+    [TargetRpc]
+    void TargetApplyJumpForce(NetworkConnection target, int jumpForce)
+    {
+        var movement = Transform.GetComponent<PlayerMovement>();
+        if (movement != null)
+        {
+            movement.jumpForce = jumpForce;
+        }
     }
 
     public int MaximumHealth
@@ -83,7 +129,7 @@ public class InstancePlayer : InstanceDatamodel
 
     public void TakeDamage(int damage)
     {
-        Transform.GetComponent<Player>().health = Transform.GetComponent<Player>().health - damage;
+        Transform.GetComponent<Player>().health -= damage;
     }
 
     private void ApplyFaceTexture(string imageUrl)

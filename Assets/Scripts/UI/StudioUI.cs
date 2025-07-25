@@ -467,6 +467,24 @@ public class StudioUI : MonoBehaviour
                 if (ImGui.DragFloat("Respawn Time", ref respawn, 0.1f, 0f, 60f)) playerDefaults.SetRespawnTime(respawn);
             }
 
+            if (selectedObject.GetComponent<ObjectClass>().className == "NPC")
+            {
+                string currentBehavior = selectedObject.GetComponent<NPCMovement>().currentBehavior ?? "None";
+
+                ImGui.Separator();
+                ImGui.Text("NPC Settings");
+                ImGui.Text("");
+                ImGui.Text("Behaviour");
+                if (ImGui.Selectable("None", currentBehavior == "None")) currentBehavior = "None";
+                if (ImGui.Selectable("Follower", currentBehavior == "Follower")) currentBehavior = "Follower";
+                if (ImGui.Selectable("Enemy", currentBehavior == "Enemy")) currentBehavior = "Enemy";
+
+                if (selectedObject.GetComponent<NPCMovement>().currentBehavior != currentBehavior)
+                {
+                    selectedObject.GetComponent<NPCMovement>().currentBehavior = currentBehavior;
+                }
+            }
+
             if (selectedObject.transform.parent != null)
             {
                 if (ImGui.Button("Unparent")) selectedObject.transform.SetParent(null);

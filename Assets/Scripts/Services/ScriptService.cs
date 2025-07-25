@@ -55,7 +55,7 @@ public class ScriptService : NetworkBehaviour
         {
             string className = args.Count > 0 && args[0].Type == DataType.String ? args[0].String : "Part";
             GameObject go = DataModel.SpawnClass(className);
-            InstanceDatamodel instance = new InstanceDatamodel(go, context.GetScript());
+            var instance = LuaInstance.GetCorrectInstance(go, context.GetScript());
             return UserData.Create(instance);
         });
 
@@ -86,102 +86,12 @@ public class ScriptService : NetworkBehaviour
         });
 
         GameObject gameObject = base.gameObject;
-        InstanceDatamodel o = null;
-        bool flag = false;
+        object o = LuaInstance.GetCorrectInstance(gameObject, script);
+        script.Globals["script"] = o != null ? UserData.Create(o) : DynValue.Nil;
 
-        try
-        {
-            if (gameObject != null)
-            {
-                ObjectClass oc = gameObject.GetComponent<ObjectClass>();
-                if (oc != null && !string.IsNullOrEmpty(oc.className))
-                {
-                    switch (oc.className)
-                    {
-                        case "Tool":
-                            o = new InstanceTool(gameObject, script);
-                            break;
-                        case "Player":
-                            o = new InstancePlayer(gameObject);
-                            break;
-                        case "Explosion":
-                            o = new InstanceExplosion(gameObject);
-                            break;
-                        case "Text3D":
-                            o = new InstanceText3D(gameObject);
-                            break;
-                        default:
-                            o = new InstanceDatamodel(gameObject);
-                            break;
-                    }
-                }
-                else
-                {
-                    o = new InstanceDatamodel(gameObject);
-                }
-
-                if (o != null)
-                {
-                    script.Globals["script"] = UserData.Create(o);
-                    flag = true;
-                }
-            }
-        }
-        catch { }
-
-        if (!flag)
-        {
-            script.Globals["script"] = DynValue.Nil;
-        }
-
-        GameObject gameObject2 = base.gameObject.transform.parent?.gameObject;
-        InstanceDatamodel o2 = null;
-        bool flag2 = false;
-
-        try
-        {
-            if (gameObject2 != null)
-            {
-                ObjectClass oc2 = gameObject2.GetComponent<ObjectClass>();
-                if (oc2 != null && !string.IsNullOrEmpty(oc2.className))
-                {
-                    switch (oc2.className)
-                    {
-                        case "Tool":
-                            o2 = new InstanceTool(gameObject2, script);
-                            break;
-                        case "Player":
-                            o2 = new InstancePlayer(gameObject2);
-                            break;
-                        case "Explosion":
-                            o2 = new InstanceExplosion(gameObject);
-                            break;
-                        case "Text3D":
-                            o2 = new InstanceText3D(gameObject);
-                            break;
-                        default:
-                            o2 = new InstanceDatamodel(gameObject2);
-                            break;
-                    }
-                }
-                else
-                {
-                    o2 = new InstanceDatamodel(gameObject2);
-                }
-
-                if (o2 != null)
-                {
-                    script.Globals["scriptParent"] = UserData.Create(o2);
-                    flag2 = true;
-                }
-            }
-        }
-        catch { }
-
-        if (!flag2)
-        {
-            script.Globals["scriptParent"] = DynValue.Nil;
-        }
+        GameObject parent = base.gameObject.transform.parent?.gameObject;
+        object o2 = LuaInstance.GetCorrectInstance(parent, script);
+        script.Globals["scriptParent"] = o2 != null ? UserData.Create(o2) : DynValue.Nil;
 
         Table gameTable = new Table(script);
         workspaceTable = new Table(script);
@@ -433,16 +343,7 @@ public class ScriptService : NetworkBehaviour
 
             if (!trackedInstances.ContainsKey(id))
             {
-                InstanceDatamodel instance = oc.className switch
-                {
-                    "Player" => new InstancePlayer(go),
-                    "Tool" => new InstanceTool(go, script),
-                    "Part" => new InstanceDatamodel(go),
-                    "Explosion" => new InstanceExplosion(go),
-                    "Text3D" => new InstanceText3D(go),
-                    _ => new InstanceDatamodel(go)
-                };
-
+                var instance = LuaInstance.GetCorrectInstance(go, script) as InstanceDatamodel;
                 trackedInstances[id] = instance;
 
                 if (instance is InstancePlayer playerInstance)

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/stuff/main.css" rel="stylesheet">
+    <link href="../css/stuff/bottomBar.css" rel="stylesheet">
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <style>
+        .square-btn {
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .square-btn i {
+            font-size: 75px;
+        }
+    </style>
+</head>
+<body data-bs-theme="dark">
+    <h1 style="margin: 30px;text-align: center;">
+        More
+    </h1>
+    <div class="container">
+        <div class="row g-3 mb-4">
+            <div class="col-6 d-grid">
+                <button class="btn btn-outline-primary square-btn" disabled>
+                    <i class="bi bi-cart4"></i>
+                    Catalog
+                </button>
+                <button class="btn btn-outline-warning square-btn" onclick="loadPage('videos');">
+                    <i class="bi bi-play-btn-fill"></i>
+                    Videos
+                </button>
+                <button class="btn btn-outline-info square-btn" disabled>
+                    <i class="bi bi-person-workspace"></i>
+                    Groups
+                </button>
+            </div>
+            <div class="col-6 d-grid">
+                <button class="btn btn-outline-secondary square-btn" disabled>
+                    <i class="bi bi-person-fill"></i>
+                    Profile
+                </button>
+                <button class="btn btn-outline-success square-btn" disabled>
+                    <i class="bi bi-people-fill"></i>
+                    Friends
+                </button>
+                <button class="btn btn-outline-danger square-btn" disabled>
+                    <i class="bi bi-archive-fill"></i>
+                    Plaaza
+                </button>
+            </div>
+        </div>
+        <button class="btn btn-outline-info mb-2" style="width: 100%;" disabled><i class="bi bi-send-fill"></i> Send Feedback</button>
+        <button class="btn btn-outline-danger mb-2" style="width: 100%;" onclick="logOut();this.disabled = true;this.innerHTML = this.innerHTML.replace('Log Out', 'Logging out...');"><i class="bi bi-door-open-fill"></i> Log Out</button>
+    </div>
+    <div class="bottomBarMargin"></div>
+    <script src="../js/stuff/main.js"></script> 
+    <script src="../js/stuff/authenticator.js"></script> 
+</body>
+</html>

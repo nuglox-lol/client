@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/stuff/main.css" rel="stylesheet">
+    <link href="../css/stuff/bottomBar.css" rel="stylesheet">
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <style>
+    .videoList .pic {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+    }
+
+    .videoList .item {
+        margin-bottom: 2rem;
+        cursor: pointer;
+    }
+    </style>
+</head>
+<body data-bs-theme="dark">
+    <h1 style="margin: 30px;text-align: center;">
+        Videos
+    </h1>
+    <div class="container">
+        <h3>Recently Uploaded</h3>
+        <div class="row videoList">
+            <div class="col-6 item">
+                <img src="https://nuglox.xyz/avatar/render/images/1.png" class="pic border rounded">
+                <div>Placeholder</div>
+                <div class="small">by nolanwhy</div>
+            </div>
+        </div>
+        <script>
+        let authsetintervalthing = setInterval(async () => {
+            if(authSet) {
+                clearInterval(authsetintervalthing);
+                const res = await requestAPI("v1/mobile/videos/get", { id: getSyncVariable("videoID") });
+                alert("a " + getSyncVariable("videoID"));
+
+                if(res.success) {
+                    document.querySelector(".videoList").innerHTML = "";
+
+                    res.data.forEach(videoData => {
+                        const el = document.createElement("div");
+                        el.className = "col-6 item";
+
+                        el.innerHTML = `
+                        <!--img src="https://nuglox.xyz/avatar/render/images/1.png" class="pic border rounded"-->
+                        <video class="pic border rounded" muted="">
+                            <source type="video/mp4">
+                        </video>
+                        <div>Placeholder</div>
+                        <div class="small">by nolanwhy</div>
+                        `;
+                        el.querySelector("source").src = "https://nuglox.xyz/videos/" + videoData.id;
+                        el.querySelectorAll("div")[0].innerText = videoData.name;
+                        el.querySelectorAll("div")[1].innerText = "by " + videoData.creator.username;
+
+                        el.addEventListener("click", () => {
+                            setSyncVariable("videoID", videoData.id);
+                            loadPage("video");
+                        });
+
+                        document.querySelector(".videoList").appendChild(el);
+                    });
+                }
+            }
+        }, 100);
+        </script>
+    </div>
+    <div class="bottomBarMargin"></div>
+    <script src="../js/stuff/main.js"></script> 
+    <script src="../js/stuff/authenticator.js"></script> 
+</body>
+</html>

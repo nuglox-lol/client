@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public static class CharacterAppearanceDownloader
 {
     #if UNITY_EDITOR
-        private static string BaseUrl = "https://brikz.world/v1/characterappearance";
+        private static string BaseUrl = "http://localhost/v1/characterappearance";
     #else
         private static string BaseUrl = GetArgs.Get("baseUrl") + "v1/characterappearance";
     #endif

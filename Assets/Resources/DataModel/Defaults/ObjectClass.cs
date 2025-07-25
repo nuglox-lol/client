@@ -13,13 +13,30 @@ public class ObjectClass : NetworkBehaviour
 
     void Start()
     {
-        if (isServer)
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        if (isServer && currentScene.name == "Player")
         {
-            RenameIfDuplicate();
+            if (gameObject.name.EndsWith("(Clone)"))
+                gameObject.name = gameObject.name.Replace("(Clone)", "").Trim();
+        }
+
+        if (!isServer && currentScene.name == "Player")
+        {
+            if (gameObject.name.EndsWith("(Clone)"))
+                gameObject.name = gameObject.name.Replace("(Clone)", "").Trim();
+        }
+
+        if (currentScene.name == "Studio")
+        {
+            if (transform.parent == null || transform.parent.GetComponent<ObjectClass>()?.className != "PlayerDefaults")
+                RenameIfDuplicate();
+            else
+                RemoveSuffix();
+
             syncedName = gameObject.name;
         }
 
-        Scene currentScene = SceneManager.GetActiveScene();
         if (currentScene.name == "BCS")
         {
             Rigidbody rb = GetComponent<Rigidbody>();
@@ -63,6 +80,20 @@ public class ObjectClass : NetworkBehaviour
         {
             gameObject.name = baseName + "-" + suffix;
             suffix++;
+        }
+    }
+
+    void RemoveSuffix()
+    {
+        string name = gameObject.name;
+        int dashIndex = name.LastIndexOf('-');
+        if (dashIndex > 0)
+        {
+            string possibleNumber = name.Substring(dashIndex + 1);
+            if (int.TryParse(possibleNumber, out _))
+            {
+                gameObject.name = name.Substring(0, dashIndex);
+            }
         }
     }
 

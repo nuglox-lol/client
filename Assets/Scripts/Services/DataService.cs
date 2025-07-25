@@ -33,6 +33,7 @@ public static class DataService
         public float JumpPower;
         public float RespawnTime;
         public string Text3DText;
+        public string NPCBehaviour;
     }
 
     [System.Serializable]
@@ -127,6 +128,12 @@ public static class DataService
                 }
             }
 
+            string npcBehaviour = null;
+            if(obj.GetComponent<ObjectClass>().className == "NPC")
+            {
+                npcBehaviour = obj.GetComponent<NPCMovement>().currentBehavior;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = obj.name,
@@ -149,7 +156,8 @@ public static class DataService
                 WalkSpeed = walkSpeed,
                 JumpPower = jumpPower,
                 RespawnTime = respawnTime,
-                Text3DText = text3DText
+                Text3DText = text3DText,
+                NPCBehaviour = npcBehaviour
             });
         }
 
@@ -419,6 +427,12 @@ public static class DataService
                 pd.SetJumpPower(data.JumpPower);
                 pd.SetRespawnTime(data.RespawnTime);
             }
+
+            var nm = obj.GetComponent<NPCMovement>();
+            if(nm != null)
+            {
+                nm.currentBehavior = data.NPCBehaviour;
+            }
         }
 
         if (!hasPlayerDefaults)
@@ -509,6 +523,12 @@ public static class DataService
                 }
             }
 
+            string npcBehaviour = null;
+            if(obj.GetComponent<ObjectClass>().className == "NPC")
+            {
+                npcBehaviour = obj.GetComponent<NPCMovement>().currentBehavior;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = o.name,
@@ -531,7 +551,8 @@ public static class DataService
                 WalkSpeed = walkSpeed,
                 JumpPower = jumpPower,
                 RespawnTime = respawnTime,
-                Text3DText = text3DText
+                Text3DText = text3DText,
+                NPCBehaviour = npcBehaviour
             });
 
             foreach (Transform child in o.transform)

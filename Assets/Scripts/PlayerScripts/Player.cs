@@ -10,6 +10,7 @@ public class Player : NetworkBehaviour
     [SyncVar] public bool isAdmin;
     [SyncVar(hook = nameof(OnHealthChanged))] public int health = 100;
     [SyncVar] public int maximumHealth = 100;
+    [SyncVar] public bool isDead = false;
 
     private InstancePlayer instancePlayer;
 
@@ -34,9 +35,9 @@ public class Player : NetworkBehaviour
 
     public void Update()
     {
-        if (isLocalPlayer && Input.GetKeyDown(KeyCode.K))
+        if (isLocalPlayer && health < 1 && !isDead)
         {
-            CmdTakeDamage(9999);
+            Kill();
         }
     }
 
@@ -58,17 +59,13 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    public void CmdTakeDamage(int damage)
+    public void Kill()
     {
-        if (health <= 0) return;
-
-        health -= damage;
-        if (health <= 0)
-        {
-            health = 0;
-            RpcOnDeath();
-            StartCoroutine(Respawn());
-        }
+        if (isDead) return;
+        isDead = true;
+        health = 0;
+        RpcOnDeath();
+        StartCoroutine(Respawn());
     }
 
     [ClientRpc]
@@ -93,6 +90,7 @@ public class Player : NetworkBehaviour
         yield return new WaitForSeconds(respawnTime);
         Vector3 respawnPosition = Vector3.zero;
         health = maximumHealth;
+        isDead = false;
         gameObject.GetComponent<PlayerMovement>().enabled = true;
         RpcRespawn(respawnPosition);
     }
@@ -155,5 +153,11 @@ public class Player : NetworkBehaviour
     {
         yield return new WaitForSeconds(delay);
         if (panel != null) panel.SetActive(false);
+    }
+    
+    [Command]
+    public void CmdSendChatMessage(string message)
+    {
+        ChatService.ReceiveMessage(message);
     }
 }

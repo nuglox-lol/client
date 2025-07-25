@@ -86,7 +86,10 @@ public class TouchedHandler : MonoBehaviour
         {
             return;
         }
-        DynValue hitInstanceDatamodel = UserData.Create(new InstanceDatamodel(key));
+
+        InstanceDatamodel instance = LuaInstance.GetCorrectInstance(key, luaScriptManager.script);
+        DynValue hitInstanceDatamodel = instance != null ? UserData.Create(instance) : DynValue.Nil;
+
         foreach (LuaEvent luaEvent in touchedEvents.Values)
         {
             luaEvent.Fire(hitInstanceDatamodel);

@@ -6,7 +6,6 @@ using UnityEngine;
 public class LuaEvent
 {
     private GameObject go;
-
     private Script initialScript;
 
     private event Action<DynValue> touchedHandlers;
@@ -21,11 +20,17 @@ public class LuaEvent
     {
         if (function.Type == DataType.Function)
         {
-            touchedHandlers += (DynValue hitObj) =>
+            Action<DynValue> handler = (DynValue hitObj) =>
             {
                 luaScript.Call(function, hitObj);
             };
+            touchedHandlers += handler;
         }
+    }
+
+    public void Disconnect()
+    {
+        touchedHandlers = null;
     }
 
     public void Fire(DynValue hitInstanceDatamodel)

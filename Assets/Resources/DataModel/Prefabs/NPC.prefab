@@ -15,11 +15,12 @@ GameObject:
   - component: {fileID: -5045520143023892398}
   - component: {fileID: 4916028508103496070}
   - component: {fileID: -9045591348721505189}
-  - component: {fileID: -996017609653860203}
   - component: {fileID: -7729618366242141002}
   - component: {fileID: -5077364250042419718}
+  - component: {fileID: 1892509855441113136}
+  - component: {fileID: 4193372603494201889}
   m_Layer: 0
-  m_Name: BackgroundPlayer
+  m_Name: NPC
   m_TagString: Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -180,22 +181,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
---- !u!114 &-996017609653860203
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2854521769487671702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  className: BackgroundPlayer
 --- !u!114 &-7729618366242141002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,6 +210,39 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   parentNetId: 0
+--- !u!114 &1892509855441113136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2854521769487671702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46b3f7c1da3bb4c4d9e8eeba7ee8d69b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentBehavior: None
+  speed: 8
+  stoppingDistance: 1.5
+  jumpForce: 8
+  jumpCooldown: 1
+--- !u!114 &4193372603494201889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2854521769487671702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c85c373e5402be448c4b11efb7bd4e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  className: NPC
 --- !u!1 &4271057839239049545
 GameObject:
   m_ObjectHideFlags: 0
