@@ -1,165 +1,109 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 
 public static class CharacterAppearanceDownloader
 {
-    #if UNITY_EDITOR
-        private static string BaseUrl = "http://localhost/v1/characterappearance";
-    #else
-        private static string BaseUrl = GetArgs.Get("baseUrl") + "v1/characterappearance";
-    #endif
+#if UNITY_EDITOR
+    private static string BaseUrl = "http://localhost/v1/characterappearance";
+#else
+    private static string BaseUrl = GetArgs.Get("baseUrl") + "v1/characterappearance";
+#endif
+    private static string GlobalBaseUrl = GetArgs.Get("baseUrl");
 
-    public static void DownloadFullAppearance(int id, Action<Dictionary<string, string>, string, string, string, string> onSuccess, Action<string> onError = null)
+    public static async Task DownloadFullAppearanceAsync(int id, Action<Dictionary<string, string>, string, string, string, string, string, string> onSuccess, Action<string> onError = null)
     {
-        string url = $"{BaseUrl}/index.php?id={id}";
-        UnityWebRequest request = UnityWebRequest.Get(url);
-        request.downloadHandler = new DownloadHandlerBuffer();
-
-        request.SendWebRequest().completed += (AsyncOperation op) =>
+        try
         {
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                onError?.Invoke(request.error);
-                return;
-            }
+            var url = $"{BaseUrl}/index.php?id={id}";
+            var json = await GetTextAsync(url);
 
-            try
-            {
-                CharacterAppearanceData data = JsonUtility.FromJson<CharacterAppearanceData>(request.downloadHandler.text);
-                DownloadBodyColors(data.bodycolorsid,
-                    colors =>
-                    {
-                        DownloadTShirtTexture(data.tshirtid,
-                            tshirtUrl =>
-                            {
-                                DownloadFaceTexture(data.faceid,
-                                    faceUrl =>
-                                    {
-                                        DownloadHatData(data.hatid,
-                                            (hatObjUrl, hatTexUrl) =>
-                                            {
-                                                onSuccess?.Invoke(colors, tshirtUrl, faceUrl, hatObjUrl, hatTexUrl);
-                                            },
-                                            onError);
-                                    },
-                                    onError);
-                            },
-                            onError);
-                    },
-                    onError);
-            }
-            catch (Exception e)
-            {
-                onError?.Invoke($"Parsing error: {e.Message}");
-            }
-        };
+            var data = JsonUtility.FromJson<CharacterAppearanceData>(json);
+
+            var colors = await DownloadBodyColorsAsync(data.bodycolorsid);
+            var faceUrl = await DownloadFaceTextureAsync(data.faceid);
+            var (hatObjUrl, hatTexUrl) = await DownloadHatDataAsync(data.hatid);
+            var shirtUrl = await DownloadShirtTextureAsync(data.shirtid);
+            var pantsUrl = await DownloadPantsTextureAsync(data.pantsid);
+            string bodyType = data.bodytype;
+
+            onSuccess?.Invoke(colors, faceUrl, hatObjUrl, hatTexUrl, shirtUrl, pantsUrl, bodyType);
+        }
+        catch (Exception e)
+        {
+            onError?.Invoke(e.Message);
+        }
     }
 
-    private static void DownloadFaceTexture(int id, Action<string> onSuccess, Action<string> onError)
+    private static async Task<string> GetTextAsync(string url)
     {
-        string url = $"{BaseUrl}/face.php?id={id}";
-        UnityWebRequest request = UnityWebRequest.Get(url);
+        using UnityWebRequest request = UnityWebRequest.Get(url);
         request.downloadHandler = new DownloadHandlerBuffer();
+        var operation = request.SendWebRequest();
 
-        request.SendWebRequest().completed += (op) =>
-        {
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                onError?.Invoke(request.error);
-                return;
-            }
+        while (!operation.isDone)
+            await Task.Yield();
 
-            string imageUrl = request.downloadHandler.text.Trim();
-            onSuccess?.Invoke(imageUrl);
-        };
+        if (request.result != UnityWebRequest.Result.Success)
+            throw new Exception(request.error);
+
+        return request.downloadHandler.text;
     }
 
-    private static void DownloadBodyColors(int id, Action<Dictionary<string, string>> onSuccess, Action<string> onError)
+    private static async Task<Dictionary<string, string>> DownloadBodyColorsAsync(int id)
     {
-        string url = $"{BaseUrl}/bodycolors.php?id={id}";
-        UnityWebRequest request = UnityWebRequest.Get(url);
-        request.downloadHandler = new DownloadHandlerBuffer();
-
-        request.SendWebRequest().completed += (op) =>
-        {
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                onError?.Invoke(request.error);
-                return;
-            }
-
-            try
-            {
-                string fixedJson = "{\"colors\":" + request.downloadHandler.text + "}";
-                BodyColorsWrapper wrapper = JsonUtility.FromJson<BodyColorsWrapper>(fixedJson);
-                onSuccess?.Invoke(wrapper.ToDictionary());
-            }
-            catch (Exception e)
-            {
-                onError?.Invoke($"Parsing body colors: {e.Message}");
-            }
-        };
+        var json = await GetTextAsync($"{BaseUrl}/bodycolors.php?id={id}");
+        string fixedJson = "{\"colors\":" + json + "}";
+        var wrapper = JsonUtility.FromJson<BodyColorsWrapper>(fixedJson);
+        return wrapper.ToDictionary();
     }
 
-    private static void DownloadTShirtTexture(int id, Action<string> onSuccess, Action<string> onError)
+    private static async Task<string> DownloadFaceTextureAsync(int id)
     {
-        string url = $"{BaseUrl}/tshirt.php?id={id}";
-        UnityWebRequest request = UnityWebRequest.Get(url);
-        request.downloadHandler = new DownloadHandlerBuffer();
-
-        request.SendWebRequest().completed += (op) =>
-        {
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                onError?.Invoke(request.error);
-                return;
-            }
-
-            string imageUrl = request.downloadHandler.text.Trim();
-            onSuccess?.Invoke(imageUrl);
-        };
+        return (await GetTextAsync($"{BaseUrl}/face.php?id={id}")).Trim();
     }
 
-    private static void DownloadHatData(int id, Action<string, string> onSuccess, Action<string> onError)
+    private static async Task<(string, string)> DownloadHatDataAsync(int id)
     {
-        string url = $"{BaseUrl}/hat.php?id={id}";
-        UnityWebRequest request = UnityWebRequest.Get(url);
-        request.downloadHandler = new DownloadHandlerBuffer();
+        string response = (await GetTextAsync($"{BaseUrl}/hat.php?id={id}")).Trim();
+        var parts = response.Split(';');
+        if (parts.Length < 2) throw new Exception("Malformed hat data: " + response);
+        return (parts[0].Trim(), parts[1].Trim());
+    }
 
-        request.SendWebRequest().completed += (op) =>
-        {
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                onError?.Invoke(request.error);
-                return;
-            }
+    private static async Task<string> DownloadShirtTextureAsync(int id)
+    {
+#if !UNITY_EDITOR
+        if (id == 0) return "";
+#endif
+        string textureId = (await GetTextAsync($"{BaseUrl}/shirt.php?id={id}")).Trim();
+        if (int.TryParse(textureId, out int texId))
+            return $"{GlobalBaseUrl}catalog_storage/shirts/{texId}.png";
+        return "";
+    }
 
-            string responseText = request.downloadHandler.text.Trim();
-
-            string[] parts = responseText.Split(';');
-            if (parts.Length < 2)
-            {
-                onError?.Invoke("Malformed hat data: " + responseText);
-                return;
-            }
-
-            string objUrl = parts[0].Trim();
-            string textureUrl = parts[1].Trim();
-
-            onSuccess?.Invoke(objUrl, textureUrl);
-        };
+    private static async Task<string> DownloadPantsTextureAsync(int id)
+    {
+#if !UNITY_EDITOR
+        if (id == 0) return "";
+#endif
+        string textureId = (await GetTextAsync($"{BaseUrl}/pants.php?id={id}")).Trim();
+        if (int.TryParse(textureId, out int texId))
+            return $"{GlobalBaseUrl}catalog_storage/pants/{texId}.png";
+        return "";
     }
 
     [Serializable]
     private class CharacterAppearanceData
     {
         public int bodycolorsid;
-        public int tshirtid;
         public int faceid;
         public int hatid;
+        public int shirtid;
+        public int pantsid;
+        public string bodytype;
     }
 
     [Serializable]

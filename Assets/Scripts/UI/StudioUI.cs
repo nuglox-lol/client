@@ -50,7 +50,7 @@ public class StudioUI : MonoBehaviour
 
         if (!string.IsNullOrEmpty(authKey))
         {
-            string authURL = "https://brikz.world/placefiles/GetFromAuth.php?auth=" + authKey;
+            string authURL = "https://nuglox.com/placefiles/GetFromAuth.php?auth=" + authKey;
             UnityWebRequest request = UnityWebRequest.Get(authURL);
             var operation = request.SendWebRequest();
 
@@ -160,7 +160,7 @@ public class StudioUI : MonoBehaviour
             ImGui.SameLine();
             if (ImGui.Button("Server Save", new Vector2(120, 0)))
             {
-                string url = "https://brikz.world/upload/game.php?authkey=" + authKey;
+                string url = "https://nuglox.com/upload/game.php?authkey=" + authKey;
                 StartCoroutine(DataService.SaveToWebsite(uploadPath, url));
                 showSaveChoiceWindow = false;
             }
@@ -467,21 +467,48 @@ public class StudioUI : MonoBehaviour
                 if (ImGui.DragFloat("Respawn Time", ref respawn, 0.1f, 0f, 60f)) playerDefaults.SetRespawnTime(respawn);
             }
 
-            if (selectedObject.GetComponent<ObjectClass>().className == "NPC")
+            if (selectedObject.GetComponent<ObjectClass>().className == "Sound")
             {
-                string currentBehavior = selectedObject.GetComponent<NPCMovement>().currentBehavior ?? "None";
+                var sound = selectedObject.GetComponent<Sound>();
 
                 ImGui.Separator();
-                ImGui.Text("NPC Settings");
+                ImGui.Text("Sound Settings");
                 ImGui.Text("");
-                ImGui.Text("Behaviour");
-                if (ImGui.Selectable("None", currentBehavior == "None")) currentBehavior = "None";
-                if (ImGui.Selectable("Follower", currentBehavior == "Follower")) currentBehavior = "Follower";
-                if (ImGui.Selectable("Enemy", currentBehavior == "Enemy")) currentBehavior = "Enemy";
 
-                if (selectedObject.GetComponent<NPCMovement>().currentBehavior != currentBehavior)
+                int soundID = sound.SoundID;
+                if (ImGui.InputInt("Sound ID", ref soundID))
                 {
-                    selectedObject.GetComponent<NPCMovement>().currentBehavior = currentBehavior;
+                    sound.SoundID = soundID;
+                }
+
+                bool autoplay = sound.Autoplay;
+                if (ImGui.Checkbox("Autoplay", ref autoplay))
+                {
+                    sound.Autoplay = autoplay;
+                }
+
+                bool loop = sound.Loop;
+                if (ImGui.Checkbox("Loop", ref loop))
+                {
+                    sound.Loop = loop;
+                }
+
+                bool playInWorld = sound.PlayInWorld;
+                if (ImGui.Checkbox("Play In World", ref playInWorld))
+                {
+                    sound.PlayInWorld = playInWorld;
+                }
+
+                float volume = sound.Volume;
+                if (ImGui.SliderFloat("Volume", ref volume, 0f, 1f))
+                {
+                    sound.Volume = volume;
+                }
+
+                float pitch = sound.Pitch;
+                if (ImGui.SliderFloat("Pitch", ref pitch, 0.5f, 2f))
+                {
+                    sound.Pitch = pitch;
                 }
             }
 
@@ -497,7 +524,6 @@ public class StudioUI : MonoBehaviour
 
         ImGui.EndChild();
         ImGui.End();
-
 
         io.WantCaptureMouse = ImGui.IsWindowHovered() || ImGui.IsAnyItemActive();
         io.WantCaptureKeyboard = io.WantCaptureMouse;

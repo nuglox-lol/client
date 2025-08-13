@@ -108,5 +108,5 @@ MonoBehaviour:
   rotationSpeed: 5
   zoomSpeed: 2
   minZoom: 0
-  maxZoom: 6.6
+  maxZoom: 16
   yOffset: 5

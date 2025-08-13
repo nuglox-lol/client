@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.Networking;
 using Mirror;
+using System.Collections;
 
 public class VoiceChatEngine : NetworkBehaviour
 {
@@ -20,19 +22,25 @@ public class VoiceChatEngine : NetworkBehaviour
     private int channels = 1;
     private bool streamStarted;
 
-    void Start()
+    IEnumerator Start()
     {
-        if (!VoiceChatServer.Enabled) return;
+        yield return StartCoroutine(VoiceChatServer.Initialize());
+
+        if (!VoiceChatServer.Enabled) yield break;
+
         if (isLocalPlayer)
         {
             micDevice = Microphone.devices[0];
             micClip = Microphone.Start(micDevice, true, 1, sampleRate);
             micBuffer = new float[sampleSize];
         }
+
         if (!audioSource)
             audioSource = GetComponent<AudioSource>();
+
         audioSource.spatialBlend = 1f;
         audioSource.playOnAwake = false;
+
         if (!isLocalPlayer)
         {
             AudioClip streamClip = AudioClip.Create("stream", audioStreamBuffer.Length, channels, sampleRate, true, OnAudioRead, OnAudioSetPosition);
@@ -41,6 +49,7 @@ public class VoiceChatEngine : NetworkBehaviour
             audioSource.Play();
             streamStarted = true;
         }
+
         if (speakingIcon != null)
             speakingIcon.SetActive(false);
     }
@@ -137,5 +146,26 @@ public class VoiceChatEngine : NetworkBehaviour
 
 public static class VoiceChatServer
 {
-    public static bool Enabled = true;
+    public static bool Enabled = false;
+
+    public static IEnumerator Initialize()
+    {
+        string url = GetArgs.Get("baseUrl") + "v1/voicechat/isenabled?gameid=" + GetArgs.Get("gameid");
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning("VoiceChatServer check failed: " + request.error);
+                Enabled = false;
+            }
+            else
+            {
+                string response = request.downloadHandler.text.Trim().ToLower();
+                Enabled = response == "true";
+                Debug.Log("VoiceChatServer.Enabled = " + Enabled);
+            }
+        }
+    }
 }

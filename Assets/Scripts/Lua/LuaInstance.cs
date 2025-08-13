@@ -23,6 +23,8 @@ public static class LuaInstance
                     return new InstanceText3D(go);
                 case "PlayerDefaults":
                     return new InstancePlayerDefaults(go);
+                case "Sound":
+                    return new InstanceSound(go);
                 default:
                     return new InstanceDatamodel(go, luaScript);
             }

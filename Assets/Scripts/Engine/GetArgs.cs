@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 public static class GetArgs
 {
-    private static readonly Dictionary<string, string> args = new Dictionary<string, string>();
+    private static readonly Dictionary<string, string> args = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, string> deepLinkArgs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
     static GetArgs()
     {
@@ -19,14 +20,48 @@ public static class GetArgs
         }
     }
 
+    public static void SetDeepLinkArgs(string url)
+    {
+        deepLinkArgs.Clear();
+        if (string.IsNullOrEmpty(url)) return;
+
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri)) return;
+
+        string query = uri.Query;
+        if (string.IsNullOrEmpty(query)) return;
+
+        var queryParams = query.TrimStart('?').Split('&');
+        foreach (var param in queryParams)
+        {
+            if (string.IsNullOrWhiteSpace(param)) continue;
+            var kvp = param.Split(new[] { '=' }, 2);
+            string key = Uri.UnescapeDataString(kvp[0]).ToLower();
+            string value = kvp.Length > 1 ? Uri.UnescapeDataString(kvp[1]) : "true";
+            deepLinkArgs[key] = value;
+        }
+    }
+
     public static string Get(string key)
     {
-        args.TryGetValue(key.ToLower(), out var value);
-        return value;
+        key = key.ToLower();
+        if (deepLinkArgs.TryGetValue(key, out var val))
+            return val;
+
+        if (args.TryGetValue(key, out val))
+            return val;
+
+        if (key == "baseurl")
+            return "https://nuglox.com/";
+
+        return null;
     }
 
     public static bool Exists(string key)
     {
-        return args.ContainsKey(key.ToLower());
+        key = key.ToLower();
+        if (deepLinkArgs.ContainsKey(key))
+            return true;
+
+        return args.ContainsKey(key);
     }
 }

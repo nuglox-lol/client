@@ -34,6 +34,14 @@ public static class DataService
         public float RespawnTime;
         public string Text3DText;
         public string NPCBehaviour;
+        public int SoundID;
+        public bool SoundIsPlaying;
+        public bool SoundAutoplay;
+        public float SoundVolume;
+        public float SoundTime;
+        public bool SoundLoop;
+        public bool SoundPlayInWorld;
+        public float SoundPitch;
     }
 
     [System.Serializable]
@@ -134,6 +142,29 @@ public static class DataService
                 npcBehaviour = obj.GetComponent<NPCMovement>().currentBehavior;
             }
 
+            var soundComp = obj.GetComponent<Sound>();
+
+            int soundID = 0;
+            bool soundIsPlaying = false;
+            bool soundAutoplay = false;
+            float soundVolume = 1f;
+            float soundTime = 0f;
+            bool soundLoop = false;
+            bool soundPlayInWorld = false;
+            float soundPitch = 1f;
+
+            if (soundComp != null)
+            {
+                soundID = soundComp.SoundID;
+                soundIsPlaying = soundComp.Playing;
+                soundAutoplay = soundComp.Autoplay;
+                soundVolume = soundComp.Volume;
+                soundTime = soundComp.Time;
+                soundLoop = soundComp.Loop;
+                soundPlayInWorld = soundComp.PlayInWorld;
+                soundPitch = soundComp.Pitch;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = obj.name,
@@ -157,7 +188,15 @@ public static class DataService
                 JumpPower = jumpPower,
                 RespawnTime = respawnTime,
                 Text3DText = text3DText,
-                NPCBehaviour = npcBehaviour
+                NPCBehaviour = npcBehaviour,
+                SoundID = soundID,
+                SoundIsPlaying = soundIsPlaying,
+                SoundAutoplay = soundAutoplay,
+                SoundVolume = soundVolume,
+                SoundTime = soundTime,
+                SoundLoop = soundLoop,
+                SoundPlayInWorld = soundPlayInWorld,
+                SoundPitch = soundPitch
             });
         }
 
@@ -428,6 +467,27 @@ public static class DataService
                 pd.SetRespawnTime(data.RespawnTime);
             }
 
+            var soundComp = obj.GetComponent<Sound>();
+            if (soundComp != null)
+            {
+                soundComp.SoundID = data.SoundID;
+                soundComp.Autoplay = data.SoundAutoplay;
+                soundComp.Volume = data.SoundVolume;
+                soundComp.Time = data.SoundTime;
+                soundComp.Loop = data.SoundLoop;
+                soundComp.PlayInWorld = data.SoundPlayInWorld;
+                soundComp.Pitch = data.SoundPitch;
+
+                if (data.SoundIsPlaying)
+                {
+                    soundComp.Play();
+                }
+                else
+                {
+                    soundComp.Stop();
+                }
+            }
+
             var nm = obj.GetComponent<NPCMovement>();
             if(nm != null)
             {
@@ -529,6 +589,29 @@ public static class DataService
                 npcBehaviour = obj.GetComponent<NPCMovement>().currentBehavior;
             }
 
+            var soundComp = obj.GetComponent<Sound>();
+
+            int soundID = 0;
+            bool soundIsPlaying = false;
+            bool soundAutoplay = false;
+            float soundVolume = 1f;
+            float soundTime = 0f;
+            bool soundLoop = false;
+            bool soundPlayInWorld = false;
+            float soundPitch = 1f;
+
+            if (soundComp != null)
+            {
+                soundID = soundComp.SoundID;
+                soundIsPlaying = soundComp.Playing;
+                soundAutoplay = soundComp.Autoplay;
+                soundVolume = soundComp.Volume;
+                soundTime = soundComp.Time;
+                soundLoop = soundComp.Loop;
+                soundPlayInWorld = soundComp.PlayInWorld;
+                soundPitch = soundComp.Pitch;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = o.name,
@@ -552,7 +635,15 @@ public static class DataService
                 JumpPower = jumpPower,
                 RespawnTime = respawnTime,
                 Text3DText = text3DText,
-                NPCBehaviour = npcBehaviour
+                NPCBehaviour = npcBehaviour,
+                SoundID = soundID,
+                SoundIsPlaying = soundIsPlaying,
+                SoundAutoplay = soundAutoplay,
+                SoundVolume = soundVolume,
+                SoundTime = soundTime,
+                SoundLoop = soundLoop,
+                SoundPlayInWorld = soundPlayInWorld,
+                SoundPitch = soundPitch
             });
 
             foreach (Transform child in o.transform)

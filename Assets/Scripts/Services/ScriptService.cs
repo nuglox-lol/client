@@ -5,6 +5,7 @@ using Mirror;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.Networking;
 
 public class ScriptService : NetworkBehaviour
 {
@@ -45,11 +46,12 @@ public class ScriptService : NetworkBehaviour
         UserData.RegisterType<InstanceDatamodel>(InteropAccessMode.Default);
         UserData.RegisterType<InstanceRigidbody>(InteropAccessMode.Default);
         UserData.RegisterType<InstanceText3D>(InteropAccessMode.Default);
+        UserData.RegisterType<InstancePlayerDefaults>(InteropAccessMode.Default);
         UserData.RegisterType<InstancePlayer>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceCamera>(InteropAccessMode.Default);
         UserData.RegisterType<TouchedHandler>(InteropAccessMode.Default);
-        UserData.RegisterType<LuaUIService>(InteropAccessMode.Default);
-        UserData.RegisterType<LuaImGui>(InteropAccessMode.Default);
         UserData.RegisterType<LuaTweenService>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceSound>(InteropAccessMode.Default);
 
         DynValue instanceNewFunc = DynValue.NewCallback((context, args) =>
         {
@@ -69,11 +71,9 @@ public class ScriptService : NetworkBehaviour
         script.Globals["Quaternion"] = typeof(LuaQuaternion);
         script.Globals["ThumbnailGenerator"] = typeof(LuaThumbnailGenerator);
         script.Globals["ModelService"] = typeof(LuaModelService);
-        script.Globals["UIService"] = typeof(LuaUIService);
         script.Globals["DataService"] = typeof(LuaDataService);
         script.Globals["Color"] = typeof(LuaColor3);
         script.Globals["print"] = new Action<object>(PrintToConsole);
-        script.Globals["ImGui"] = typeof(LuaImGui);
         script.Globals["TweenService"] = typeof(LuaTweenService);
         script.Globals["wait"] = (Func<DynValue, DynValue>)((seconds) =>
         {
@@ -98,6 +98,56 @@ public class ScriptService : NetworkBehaviour
         gameTable.Set("Workspace", DynValue.NewTable(workspaceTable));
         playersTable = new Table(script);
         gameTable.Set("Players", DynValue.NewTable(playersTable));
+
+        Table chatTable = new Table(script);
+
+        chatTable.Set("Message", DynValue.NewCallback((c, args) =>
+        {
+            if (!isServer)
+                return DynValue.Nil;
+
+            if (args.Count > 0 && args[0].Type == DataType.String)
+            {
+                string message = args[0].String;
+                ChatService.ServerAddMessage(message);
+            }
+
+            return DynValue.Nil;
+        }));
+
+        gameTable.Set("Chat", DynValue.NewTable(chatTable));
+
+        Table apisTable = new Table(script);
+
+        apisTable.Set("Stop", DynValue.NewCallback((c, args) =>
+        {
+            if (!isServer) return DynValue.Nil;
+
+            Stop();
+            return DynValue.Nil;
+        }));
+
+        gameTable.Set("Apis", DynValue.NewTable(apisTable));
+
+        gameTable.Set("HttpGet", DynValue.NewCallback((c, args) =>
+        {
+            if (args.Count < 1 || args[0].Type != DataType.String)
+                return DynValue.NewString("");
+
+            string url = args[0].String;
+            using (var client = new System.Net.WebClient())
+            {
+                try
+                {
+                    string result = client.DownloadString(url);
+                    return DynValue.NewString(result);
+                }
+                catch
+                {
+                    return DynValue.NewString("");
+                }
+            }
+        }));
 
         playersAddedEvent = new LuaEvent(base.gameObject, script);
         playersRemovedEvent = new LuaEvent(base.gameObject, script);
@@ -209,6 +259,12 @@ public class ScriptService : NetworkBehaviour
                 }
             }
         }
+    }
+
+    public void Stop()
+    {
+        if (!isServer) return;
+        StartCoroutine(SendWebRequest(GetArgs.Get("baseurl") + "v1/gameserver/close.php?password=" + GetArgs.Get("password") + "&gameid=" + GetArgs.Get("gameid")));
     }
 
     private void Start()
@@ -391,5 +447,11 @@ public class ScriptService : NetworkBehaviour
     private void Update()
     {
         LuaTweenService.Update(Time.deltaTime);
+    }
+
+    IEnumerator SendWebRequest(string url)
+    {
+        UnityWebRequest www = UnityWebRequest.Get(url);
+        yield return www.SendWebRequest();
     }
 }

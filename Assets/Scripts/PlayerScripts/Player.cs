@@ -13,6 +13,7 @@ public class Player : NetworkBehaviour
     [SyncVar] public bool isDead = false;
 
     private InstancePlayer instancePlayer;
+    private bool _hasPlayedDeathSound = false;
 
     public float respawnTime = 5f;
     public GameObject playerBody;
@@ -27,15 +28,24 @@ public class Player : NetworkBehaviour
         }
 
         instancePlayer = new InstancePlayer(gameObject);
+#if UNITY_EDITOR
+        instancePlayer.CharacterAppearance = characterAppearanceId;
+#else
         if (characterAppearanceId > 0)
         {
             instancePlayer.CharacterAppearance = characterAppearanceId;
         }
+#endif
     }
 
     public void Update()
     {
         if (isLocalPlayer && health < 1 && !isDead)
+        {
+            Kill();
+        }
+
+        if (isLocalPlayer && gameObject.transform.position.y < -100 && !isDead)
         {
             Kill();
         }
@@ -75,12 +85,19 @@ public class Player : NetworkBehaviour
         {
             SetRenderersEnabled(playerBody, false);
         }
-        gameObject.GetComponent<PlayerMovement>().enabled = false;
 
-        AudioClip deathClip = Resources.Load<AudioClip>("Audio/Akh");
-        if (deathClip != null)
+        var movement = gameObject.GetComponent<PlayerMovement>();
+        if (movement != null)
+            movement.enabled = false;
+
+        if (isLocalPlayer && !_hasPlayedDeathSound)
         {
-            AudioSource.PlayClipAtPoint(deathClip, transform.position);
+            AudioClip deathClip = Resources.Load<AudioClip>("Audio/Akh");
+            if (deathClip != null)
+            {
+                AudioSource.PlayClipAtPoint(deathClip, transform.position);
+                _hasPlayedDeathSound = true;
+            }
         }
     }
 
@@ -104,6 +121,7 @@ public class Player : NetworkBehaviour
             SetRenderersEnabled(playerBody, true);
         }
         gameObject.GetComponent<PlayerMovement>().enabled = true;
+        _hasPlayedDeathSound = false;
     }
 
     void SetRenderersEnabled(GameObject obj, bool enabled)
@@ -139,13 +157,10 @@ public class Player : NetworkBehaviour
     private void ShowAlert(string message, float duration)
     {
         var coreGui = GameObject.Find("CoreGui");
-
         var alertPanel = coreGui.transform.Find("AlertPanel");
         var alertText = alertPanel?.Find("AlertMessage")?.GetComponent<TMPro.TextMeshProUGUI>();
-
         alertText.text = message;
         alertPanel.gameObject.SetActive(true);
-
         StartCoroutine(HideAlertAfterDelay(alertPanel.gameObject, duration));
     }
 
@@ -154,10 +169,46 @@ public class Player : NetworkBehaviour
         yield return new WaitForSeconds(delay);
         if (panel != null) panel.SetActive(false);
     }
-    
+
     [Command]
     public void CmdSendChatMessage(string message)
     {
+        RpcReceiveChatMessage(message);
+    }
+
+    [ClientRpc]
+    void RpcReceiveChatMessage(string message)
+    {
         ChatService.ReceiveMessage(message);
+    }
+
+    [TargetRpc]
+    public void TargetSetCameraMode(NetworkConnection target, int mode)
+    {
+        var camController = Camera.main.GetComponent<CameraController>();
+        if (camController != null)
+        {
+            camController.cameraMode = (CameraController.CameraMode)mode;
+        }
+    }
+
+    [TargetRpc]
+    public void TargetInterpolateCamera(NetworkConnection target, Vector3 pos, Quaternion rot, float time)
+    {
+        var camController = Camera.main.GetComponent<CameraController>();
+        if (camController != null)
+        {
+            camController.Interpolate(pos, rot, time);
+        }
+    }
+
+    [TargetRpc]
+    public void TargetSetCameraYOffset(NetworkConnection target, float yOffset)
+    {
+        var camController = Camera.main.GetComponent<CameraController>();
+        if (camController != null)
+        {
+            camController.yOffset = yOffset;
+        }
     }
 }

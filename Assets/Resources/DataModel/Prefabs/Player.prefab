@@ -74,7 +74,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1
-  m_Height: 5.5
+  m_Height: 5.7
   m_Direction: 1
   m_Center: {x: 0, y: 2.6, z: 0}
 --- !u!114 &643295846759517928
@@ -510,7 +510,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1642782290470850431
 Transform:
   m_ObjectHideFlags: 0

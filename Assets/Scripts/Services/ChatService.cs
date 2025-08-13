@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mirror;
 
 public static class ChatService
 {
@@ -17,5 +18,15 @@ public static class ChatService
     public static void Clear()
     {
         messages.Clear();
+    }
+
+    public static void ServerAddMessage(string message)
+    {
+        if (!NetworkServer.active)
+            return;
+
+        string serverMessage = $"[SERVER]: {message}";
+        messages.Add(serverMessage);
+        OnMessageReceived?.Invoke(serverMessage);
     }
 }

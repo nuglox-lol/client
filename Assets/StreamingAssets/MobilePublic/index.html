@@ -1,139 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="./content/css/bootstrap.min.css" rel="stylesheet">
-    <link href="./content/css/bootstrap-icons.css" rel="stylesheet">
-    <link href="./content/css/stuff/main.css" rel="stylesheet">
-    <link href="./content/css/stuff/loadingPage.css" rel="stylesheet">
-    <link href="./content/css/stuff/bottomBar.css" rel="stylesheet">
-    <script src="./content/js/bootstrap.bundle.min.js"></script>
-    <title>NUGLOX Mobile UI</title>
-</head>
-<body data-bs-theme="dark" style="background: black;">
-    <div id="loadingPage">
-        <img src="./content/images/logos/NUGLOXLogo.png">
-        <img src="./content/images/loadingCircles/roblox2016.png">
-        <span>Welcome to NUGLOX!</span>
-    </div>
-    <iframe id="pageContent" allowtransparency="true">
-
-    </iframe>
-    <div id="bottomBar" style="display: none;">
-        <button class="btn btn-dark">
-            <i class="bi bi-house-door-fill"></i>
-            <span>Home</span>
-        </button>
-        <button class="btn btn-dark">
-            <i class="bi bi-controller"></i>
-            <span>Games</span>
-        </button>
-        <button class="btn btn-dark">
-            <i class="bi bi-person-fill"></i>
-            <span>Character</span>
-        </button>
-        <button class="btn btn-dark">
-            <i class="bi bi-currency-dollar"></i>
-            <span>BUX</span>
-        </button>
-        <button class="btn btn-dark">
-            <i class="bi bi-plus-circle-fill"></i>
-            <span>More</span>
-        </button>
-    </div>
-    <script src="./content/js/confetti.browser.min.js"></script>
-    <script>
-    window.addEventListener("message", e => {
-        if(e.data.type === "confettiSpawn")
-            confettiSpawn();
-    });
-
-    function confettiSpawn() {
-        if(!document.querySelector("#bdayconfetti")) {
-            let canvas = document.createElement("canvas");
-            canvas.id = "bdayconfetti";
-            canvas.style.position = "fixed";
-            canvas.style.width = "100%";
-            canvas.style.height = "100%";
-            canvas.style.top = "0";
-            canvas.style.pointerEvents = "none";
-            canvas.style.zIndex = "1000";
-            document.body.appendChild(canvas);
-
-            // thanks to https://codepen.io/catdad/pen/rNWrEGd
-            // call me a skid :P -nolanwhy
-            const randomInRange = (min, max) => Math.random() * (max - min) + min;
-            const between = (val, low, high) => val > low && val < high;
-            const colors = (function* () {
-                const values = [ '#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff' ];
-
-                for (let i = values.length; true; i = (i - 1) || values.length) {
-                    yield values[i - 1];
-                }
-            })();
-            
-            let bdayconfetti = confetti.create(canvas, {
-                resize: true,
-                useWorker: true
-            });
-
-            const randomConfetti = (color, x) => bdayconfetti({
-                particleCount: 1,
-                startVelocity: 0,
-                origin: { x: x, y: 0 },
-                colors: [color],
-                gravity: randomInRange(1, 1.5),
-                scalar: randomInRange(0.6, 1.4),
-                drift: randomInRange(-0.7, 0.7)
-            });
-
-            const drop = () => {
-                const duration = 3 * 1000;
-                const animationEnd = Date.now() + duration;
-
-                const dropConfetti = ({ count, minX, maxX }) => {
-                    while (count--) {
-                        randomConfetti(colors.next().value, randomInRange(minX, maxX));
-                    }
-                };
-            
-                const frame = () => {
-                    const timeLeft = animationEnd - Date.now();
-                    const progress = 1 - (timeLeft / duration);
-
-                    switch (true) {
-                        case between(progress, 0, 0.2):
-                            dropConfetti({ count: 4, minX: 0.1, maxX: 0.9 });
-                            break;
-                        case between(progress, 0.2, 0.5):
-                            dropConfetti({ count: 10, minX: 0, maxX: 1 });
-                            break;
-                        case between(progress, 0.5, 0.7):
-                            dropConfetti({ count: 8, minX: 0.1, maxX: 0.9 });
-                            break;
-                        case between(progress, 0.7, 0.85):
-                            dropConfetti({ count: 2, minX: 0.25, maxX: 0.75 });
-                            break;
-                        case between(progress, 0.85, 2):
-                            dropConfetti({ count: 1, minX: 0.4, maxX: 0.6 });
-                            break;
-                    }
-
-                    if(timeLeft > 0) {
-                        setTimeout(() => frame(), 100);
-                    }
-                };
-
-                frame();
-            };
-
-            setInterval(() => drop(), 2500);
-        }
-    };
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NUGLOX Loading</title>
+<link rel="stylesheet" href="content/css/loading.css" />
+<script src="content/js/api.js"></script>
+<script>
+  async function checkLogin() {
+    const data = await makeApiRequest('v1/mobile/getinfo');
+    if (data && data.loggedIn) {
+      window.location.href = 'home.html';
+    } else {
+      window.location.href = 'signin.html';
+    }
+  }
+  window.onload = checkLogin;
 </script>
-    <script src="./content/js/stuff/main.js"></script>
-    <script src="./content/js/stuff/authenticator.js"></script>
-    <script src="./content/js/stuff/bottomBar.js"></script>
+</head>
+<body>
+<div class="loading-container">
+  <div class="logo"><img src="content/images/NUGLOXLogo.png" alt="NUGLOX Logo" /></div>
+  <div class="spinner"></div>
+</div>
 </body>
 </html>

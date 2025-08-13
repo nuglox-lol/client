@@ -1,9 +1,11 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerMovement : NetworkBehaviour
 {
     public bool isStudio;
+    private bool isMobile = false;
     [SyncVar] public float speed = 8f;
     [SyncVar] public float jumpForce = 8f;
 
@@ -11,9 +13,29 @@ public class PlayerMovement : NetworkBehaviour
     private Animator animator;
     private Rigidbody rb;
     private bool isGrounded;
-    private Seat currentSeat;
-    private bool isSeated => currentSeat != null;
     private Vector3 input;
+
+    private GameObject joystick;
+    private GameObject jumpButton;
+    private bool jumpPressed;
+
+    [SyncVar]
+    public bool CanMove = true;
+
+    private void Awake()
+    {
+        isMobile = Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer;
+
+        if (!isMobile)
+        {
+            var js = GameObject.Find("CoreGui/Joystick");
+            if (js != null)
+                js.SetActive(false);
+            var jb = GameObject.Find("CoreGui/Jump");
+            if (jb != null)
+                jb.SetActive(false);
+        }
+    }
 
     private void Start()
     {
@@ -35,6 +57,32 @@ public class PlayerMovement : NetworkBehaviour
         }
 
         SpawnPlayerCamera();
+
+        if (isMobile)
+        {
+            joystick = GameObject.Find("CoreGui/Joystick");
+            jumpButton = GameObject.Find("CoreGui/Jump");
+            if (jumpButton != null)
+            {
+                var eventTrigger = jumpButton.GetComponent<EventTrigger>();
+                if (eventTrigger == null) eventTrigger = jumpButton.AddComponent<EventTrigger>();
+
+                var entryDown = new EventTrigger.Entry { eventID = EventTriggerType.PointerDown };
+                entryDown.callback.AddListener(e => { jumpPressed = true; });
+                var entryUp = new EventTrigger.Entry { eventID = EventTriggerType.PointerUp };
+                entryUp.callback.AddListener(e => { jumpPressed = false; });
+
+                eventTrigger.triggers.Add(entryDown);
+                eventTrigger.triggers.Add(entryUp);
+            }
+        }
+    }
+
+    public void Move(Vector3 moveDir)
+    {
+        if (rb == null || !CanMove) return;
+        Vector3 velocity = moveDir * speed;
+        rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);
     }
 
     private void SpawnPlayerCamera()
@@ -61,33 +109,29 @@ public class PlayerMovement : NetworkBehaviour
         if (!isLocalPlayer && !isStudio) return;
         if (!(isLocalPlayer || isStudio) || cam == null) return;
 
-        if (isSeated)
+        if (isMobile && joystick != null)
         {
-            input = Vector3.zero;
-            if (Input.GetKeyDown(KeyCode.Space))
+            var handle = joystick.transform.Find("Handle");
+            if (handle != null)
             {
-                CmdStandUp();
+                Vector3 localPos = handle.localPosition;
+                input.x = Mathf.Clamp(localPos.x / 100f, -1f, 1f);
+                input.z = Mathf.Clamp(localPos.y / 100f, -1f, 1f);
             }
-            return;
         }
-
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        input = new Vector3(horizontal, 0f, vertical);
+        else
+        {
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            input = new Vector3(horizontal, 0f, vertical);
+        }
     }
 
     private void FixedUpdate()
     {
         if (!isLocalPlayer && !isStudio) return;
 
-        if (isSeated)
-        {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            transform.position = currentSeat.transform.position;
-            animator?.SetBool("IsWalking", false);
-            return;
-        }
+        if (!CanMove) return;
 
         if (input.sqrMagnitude > 0.01f)
         {
@@ -113,10 +157,22 @@ public class PlayerMovement : NetworkBehaviour
             animator?.SetBool("IsWalking", false);
         }
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (isMobile)
         {
-            CmdJump(jumpForce);
-            isGrounded = false;
+            if (jumpPressed && isGrounded)
+            {
+                CmdJump(jumpForce);
+                isGrounded = false;
+                jumpPressed = false;
+            }
+        }
+        else
+        {
+            if (Input.GetButtonDown("Jump") && isGrounded)
+            {
+                CmdJump(jumpForce);
+                isGrounded = false;
+            }
         }
 
         animator?.SetBool("IsJumping", !isGrounded);
@@ -126,7 +182,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         foreach (ContactPoint contact in collision.contacts)
         {
-            if (contact.normal.y > 0.5f)
+            if (contact.normal.y > 0.01f)
             {
                 isGrounded = true;
                 break;
@@ -142,7 +198,7 @@ public class PlayerMovement : NetworkBehaviour
     [Command]
     private void CmdMove(Vector3 moveDir)
     {
-        if (rb == null) return;
+        if (rb == null || !CanMove) return;
         Vector3 velocity = moveDir * speed;
         rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);
     }
@@ -150,34 +206,15 @@ public class PlayerMovement : NetworkBehaviour
     [Command]
     private void CmdStop()
     {
-        if (rb == null) return;
+        if (rb == null || !CanMove) return;
         rb.velocity = new Vector3(0f, rb.velocity.y, 0f);
     }
 
     [Command]
     private void CmdJump(float force)
     {
-        if (rb == null) return;
+        if (rb == null || !CanMove) return;
         rb.velocity = new Vector3(rb.velocity.x, force, rb.velocity.z);
-    }
-
-    [Command]
-    private void CmdStandUp()
-    {
-        if (currentSeat != null)
-        {
-            currentSeat.CmdRequestStand(netIdentity);
-        }
-    }
-
-    public void SitOn(Seat seat)
-    {
-        currentSeat = seat;
-    }
-
-    public void StandUp()
-    {
-        currentSeat = null;
     }
 
     public override bool Weaved()

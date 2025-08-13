@@ -393,44 +393,4 @@ public class InstanceDatamodel
 			material.color = color;
 		}
 	}
-
-	public void PlayAudio(string url, float radius = 10f, bool isLoop = false)
-	{
-		if (go == null) return;
-		AudioSource audioSource = go.GetComponent<AudioSource>();
-		if (audioSource == null)
-		{
-			audioSource = go.AddComponent<AudioSource>();
-		}
-		audioSource.spatialBlend = 1f;
-		audioSource.maxDistance = radius;
-		audioSource.rolloffMode = AudioRolloffMode.Linear;
-		audioSource.loop = isLoop;
-		audioSource.playOnAwake = false;
-		UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG);
-		request.SendWebRequest().completed += delegate
-		{
-			if (request.result != UnityWebRequest.Result.Success)
-			{
-				Console.Report("Failed to load audio from " + url + " !");
-			}
-			else
-			{
-				AudioClip content = DownloadHandlerAudioClip.GetContent(request);
-				audioSource.clip = content;
-				audioSource.Play();
-			}
-		};
-	}
-
-	public void StopAudio()
-	{
-		if (go == null) return;
-		AudioSource component = go.GetComponent<AudioSource>();
-		if (component != null)
-		{
-			component.Stop();
-			UnityEngine.Object.Destroy(component);
-		}
-	}
 }

@@ -108,10 +108,10 @@ public class AuthManager : NetworkManager
     public override void OnStartServer()
     {
         base.OnStartServer();
-        string url = GetArgs.Get("baseUrl") + "placefiles/" + GetArgs.Get("gameid") + ".bpf";
+        string url = GetArgs.Get("baseUrl") + "placefiles/" + GetArgs.Get("gameid") + ".npf";
         DataService.LoadURL(url, true);
         #if UNITY_EDITOR
-        DataService.LoadURL("https://brikz.world/placefiles/1.bpf", true);
+        DataService.LoadURL("https://nuglox.com/placefiles/1.bpf", true);
         #endif
         NetworkServer.RegisterHandler<AuthKeyMessage>(OnAuthKeyMessageReceived, false);
     }
