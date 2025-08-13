@@ -13,6 +13,8 @@ It was made public on **August 13, 2025** to allow the community to contribute, 
 
 This project is designed with **Unity** and includes networking features, cross-platform support, and tools to make development easier.
 
+* NOTE: If you are part of the Quenet Family you are not authorized to use the source code.
+
 ---
 
 ## 🛠️ Features
