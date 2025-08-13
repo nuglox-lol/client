@@ -1,13 +1,44 @@
-# NUGLOX Client Source Code
+# NUGLOX Client
 
-- Why is that public?
+## Public Release – August 13, 2025
 
-The source code was made public August 13th 2025 because we need contributors on NUGLOX to make our client better.
+The source code for NUGLOX Client was made public on **August 13, 2025** to allow contributors to help improve the project.
 
-- Am i allowed to use it for my own project?
+---
 
-Yes if u dont plan to make money with it.
+## About
 
-- Is this code skidded from ChatGPT or other sources?
+- **Why Public?**  
+  This repository is public so that the community can contribute to improving NUGLOX.
 
-No, it isnt, this code was entirely made by NiceYomi and some other developers that left.
+- **Usage**  
+  You are free to use, fork, and modify this code **as long as it is not used for profit**.
+
+- **Original Work**  
+  This code was created entirely by **NiceYomi** and other developers who are no longer involved.  
+  It is **not** stolen from ChatGPT or other external sources.
+
+---
+
+## Features
+
+- Unity-compatible networking components  
+- Multi-protocol transport support  
+- Example scenes and tools (if available)  
+- Performance-focused design
+
+---
+
+## Requirements
+
+- Unity 2021.1 or newer  
+- .NET 4.x runtime  
+- Supported platforms: Windows, macOS, Linux (depending on Unity build target)
+
+---
+
+## Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/nuglox-lol/client.git
