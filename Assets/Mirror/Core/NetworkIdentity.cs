@@ -145,7 +145,7 @@ namespace Mirror
                 return _assetId;
             }
             // assetId is set internally when creating or duplicating a prefab
-            set
+            internal set
             {
                 // should never be empty
                 if (value == 0)
