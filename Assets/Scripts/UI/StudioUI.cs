@@ -512,6 +512,30 @@ public class StudioUI : MonoBehaviour
                 }
             }
 
+            if (selectedObject.GetComponent<ObjectClass>().className == "Team")
+            {
+                var team = selectedObject.GetComponent<Team>();
+
+                string teamName = team.TeamName;
+                if (ImGui.InputText("Team Name", ref teamName, 64)) team.TeamName = teamName;
+
+                Color teamColor = team.TeamColor;
+                Vector3 colorVecTEAM = new Vector3(teamColor.r, teamColor.g, teamColor.b);
+
+                if (ImGui.ColorEdit3("Team Color", ref colorVecTEAM))
+                {
+                    team.TeamColor = new Color(colorVecTEAM.x, colorVecTEAM.y, colorVecTEAM.z, 1f);
+                }
+            }
+
+            if (selectedObject.GetComponent<ObjectClass>().className == "SpawnPoint")
+            {
+                var sp = selectedObject.GetComponent<SpawnPoint>();
+
+                string teamName = sp.teamName;
+                if (ImGui.InputText("Team Name", ref teamName, 64)) sp.teamName = teamName;
+            }
+
             if (selectedObject.transform.parent != null)
             {
                 if (ImGui.Button("Unparent")) selectedObject.transform.SetParent(null);

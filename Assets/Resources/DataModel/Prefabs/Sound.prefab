@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -1252012652272508637}
   - component: {fileID: -4184620827321361482}
   - component: {fileID: 804762707500340281}
+  - component: {fileID: 7962955699365834840}
   m_Layer: 0
   m_Name: Sound
   m_TagString: Object
@@ -236,3 +237,19 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   className: Sound
+--- !u!114 &7962955699365834840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4518463532970771655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c595536dd8e0b5a4ba124b04a4a4de50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  parentNetId: 0

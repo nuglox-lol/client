@@ -54,6 +54,12 @@ public class InstancePlayer : InstanceDatamodel
         Camera = new InstanceCamera(playerComponent);
     }
 
+    public string TeamName
+    {
+        get => Transform.GetComponent<Player>().TeamName;
+        set => Transform.GetComponent<Player>().TeamName = value;
+    }
+
     public int UserId
     {
         get => Transform.GetComponent<Player>().userID;

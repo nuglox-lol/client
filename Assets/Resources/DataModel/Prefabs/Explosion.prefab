@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 5704554993990091600}
   - component: {fileID: -8039980047673285033}
   - component: {fileID: -3683444500358669184}
-  - component: {fileID: -7441855734906038257}
+  - component: {fileID: -4911361414373597915}
   m_Layer: 0
   m_Name: Explosion
   m_TagString: Object
@@ -5128,7 +5128,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-7441855734906038257
+--- !u!114 &-4911361414373597915
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

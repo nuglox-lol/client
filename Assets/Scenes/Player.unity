@@ -556,10 +556,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 315542219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00001657, y: 0.000038147}
-  m_SizeDelta: {x: 722.1503, y: 151.58}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -0.000015259, y: -62}
+  m_SizeDelta: {x: 332.7501, y: 75.79001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &206475989
 MonoBehaviour:
@@ -652,7 +652,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 16
+  m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
@@ -1020,14 +1020,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.6392157}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.6392157}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bd8fc71796197b448846f2bff0fd5d66, type: 3}
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1084,7 +1084,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.5325928, y: 0}
+  m_AnchoredPosition: {x: -1.5131836, y: 0}
   m_SizeDelta: {x: -2.0999756, y: 0.18548584}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &315818524
@@ -1112,7 +1112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.7882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1250,7 +1250,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 193.0326, y: 62.600006}
+  m_AnchoredPosition: {x: 191.1326, y: 277}
   m_SizeDelta: {x: 660.416, y: 94.1754}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &421738448
@@ -1769,7 +1769,7 @@ GameObject:
   - component: {fileID: 598546610}
   - component: {fileID: 598546609}
   m_Layer: 5
-  m_Name: Accept
+  m_Name: Reset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1792,7 +1792,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -192.1, y: 62.600006}
+  m_AnchoredPosition: {x: -194, y: 277}
   m_SizeDelta: {x: 660.4161, y: 94.1754}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &598546609
@@ -2367,10 +2367,13 @@ MonoBehaviour:
   - {fileID: 3159130164586676213, guid: c241bbaf6a2c5f04d82406c2eb96ca86, type: 3}
   - {fileID: 2854521769487671702, guid: 9c6226912d9342b42a09559898fb549e, type: 3}
   - {fileID: 2769521522580540343, guid: d60fc9e73520f7e4da01446893f20cd1, type: 3}
+  - {fileID: 2854521769487671702, guid: 8f9a3453f0826a841911d14990ace907, type: 3}
   - {fileID: 3933645318877831748, guid: 67d8dfd1b04a6ed468bb4e0e4c26e143, type: 3}
   - {fileID: 4957806643763680526, guid: 88ddd344978210549b8b3735da4bd2bf, type: 3}
   - {fileID: 1141785902744398573, guid: e94b5da2886975a42951e6f9e5a5a629, type: 3}
   - {fileID: 4518463532970771655, guid: c7618bf1ca6865d4b97c2142769fbf78, type: 3}
+  - {fileID: 2769521522580540343, guid: 9c2a426137951d445a85161ae80433ba, type: 3}
+  - {fileID: 5427359261294590153, guid: 0dff599fd4ebe1c4ea1dde3f3e81649f, type: 3}
   - {fileID: 3996517495200161483, guid: 7e597ea5045fcc84e8fae6d35080305d, type: 3}
   - {fileID: 9057342335287344021, guid: 8b54e95f84bd70445b285fe2cad23cc0, type: 3}
   - {fileID: 3683885264096075173, guid: c8727b6e6681e9e4f8e205606eb5937d, type: 3}
@@ -2814,7 +2817,7 @@ GameObject:
   - component: {fileID: 963650272}
   - component: {fileID: 963650271}
   - component: {fileID: 963650270}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: Jump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3022,10 +3025,10 @@ RectTransform:
   - {fileID: 1392782493}
   - {fileID: 1358335707}
   - {fileID: 386223301}
-  - {fileID: 315818523}
   - {fileID: 897577868}
   - {fileID: 363653004}
   - {fileID: 963650269}
+  - {fileID: 315818523}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3069,8 +3072,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00024414062, y: -31.263428}
-  m_SizeDelta: {x: -0.0005, y: 62.5266}
+  m_AnchoredPosition: {x: 0.00024414062, y: -32.3136}
+  m_SizeDelta: {x: -0.0005, y: 64.6269}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1028110661
 CanvasRenderer:
@@ -3770,6 +3773,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Joystick
       objectReference: {fileID: 0}
+    - target: {fileID: 2929252283123773939, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2929252285020697096, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_SizeDelta.x
       value: 64
@@ -3785,6 +3792,10 @@ PrefabInstance:
     - target: {fileID: 2929252285020697096, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2929252285020697097, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5691,6 +5702,9 @@ MonoBehaviour:
   - {fileID: 3683885264096075173, guid: c8727b6e6681e9e4f8e205606eb5937d, type: 3}
   - {fileID: 1274001335075450435, guid: 2a628a65e2424fa4d9ab853df1c70bc2, type: 3}
   - {fileID: 4518463532970771655, guid: c7618bf1ca6865d4b97c2142769fbf78, type: 3}
+  - {fileID: 2769521522580540343, guid: 9c2a426137951d445a85161ae80433ba, type: 3}
+  - {fileID: 5427359261294590153, guid: 0dff599fd4ebe1c4ea1dde3f3e81649f, type: 3}
+  - {fileID: 2854521769487671702, guid: 8f9a3453f0826a841911d14990ace907, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2

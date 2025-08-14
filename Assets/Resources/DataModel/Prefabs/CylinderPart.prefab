@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 2613623614681214821}
   - component: {fileID: 6626413918139725773}
   - component: {fileID: -4011163183216418792}
-  - component: {fileID: 9054302562623663610}
+  - component: {fileID: 122981085875827258}
   m_Layer: 0
   m_Name: CylinderPart
   m_TagString: Object
@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1
---- !u!114 &9054302562623663610
+--- !u!114 &122981085875827258
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

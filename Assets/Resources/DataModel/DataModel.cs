@@ -25,7 +25,9 @@ public static class DataModel
         "Folder",
         "Text3D",
         "ToolAttachmentPoint",
-        "Sound"
+        "Sound",
+        "Team",
+        "SpawnPoint"
     };
 
     public static GameObject LoadDataModel(string className)

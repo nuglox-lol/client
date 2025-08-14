@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6722289711573989552}
   - component: {fileID: -1245053174626496479}
   - component: {fileID: 6854291932985834830}
+  - component: {fileID: 7421657528724307302}
   m_Layer: 5
   m_Name: Text3D
   m_TagString: Object
@@ -210,6 +211,22 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   className: Text3D
+--- !u!114 &7421657528724307302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3996517495200161483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c595536dd8e0b5a4ba124b04a4a4de50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  parentNetId: 0
 --- !u!1 &8813728315302382567
 GameObject:
   m_ObjectHideFlags: 0

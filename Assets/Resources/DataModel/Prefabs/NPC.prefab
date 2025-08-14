@@ -16,9 +16,9 @@ GameObject:
   - component: {fileID: 4916028508103496070}
   - component: {fileID: -9045591348721505189}
   - component: {fileID: -7729618366242141002}
-  - component: {fileID: -5077364250042419718}
   - component: {fileID: 1892509855441113136}
   - component: {fileID: 4193372603494201889}
+  - component: {fileID: -3846123730664204238}
   m_Layer: 0
   m_Name: NPC
   m_TagString: Object
@@ -164,6 +164,7 @@ MonoBehaviour:
   isAdmin: 0
   health: 0
   maximumHealth: 100
+  isDead: 0
   respawnTime: 5
   playerBody: {fileID: 0}
 --- !u!114 &-9045591348721505189
@@ -194,22 +195,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1
---- !u!114 &-5077364250042419718
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2854521769487671702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c595536dd8e0b5a4ba124b04a4a4de50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  parentNetId: 0
 --- !u!114 &1892509855441113136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,6 +228,22 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   className: NPC
+--- !u!114 &-3846123730664204238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2854521769487671702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c595536dd8e0b5a4ba124b04a4a4de50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  parentNetId: 0
 --- !u!1 &4271057839239049545
 GameObject:
   m_ObjectHideFlags: 0

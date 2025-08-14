@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 1246795646209785736}
   - component: {fileID: -5277138850488909145}
   - component: {fileID: -7305154050244512558}
-  - component: {fileID: -1044740806147570161}
+  - component: {fileID: -2187259090876100814}
   m_Layer: 0
   m_Name: Seat
   m_TagString: Object
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1
---- !u!114 &-1044740806147570161
+--- !u!114 &-2187259090876100814
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

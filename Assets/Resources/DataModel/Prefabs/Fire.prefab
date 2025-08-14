@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -7762992623925476187}
   - component: {fileID: 3404214771667745364}
   - component: {fileID: -1913996032203313133}
-  - component: {fileID: 7476546139368248952}
+  - component: {fileID: 5507869559335443837}
   m_Layer: 0
   m_Name: Fire
   m_TagString: Object
@@ -4937,7 +4937,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1
---- !u!114 &7476546139368248952
+--- !u!114 &5507869559335443837
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

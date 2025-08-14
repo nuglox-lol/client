@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4279586403283753210}
   - component: {fileID: 2395984575218919298}
   - component: {fileID: -1146290812566525188}
-  - component: {fileID: 2079472052740564628}
+  - component: {fileID: -2695865679477045570}
   m_Layer: 0
   m_Name: Folder
   m_TagString: Object
@@ -67,7 +67,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   className: Folder
---- !u!114 &2079472052740564628
+--- !u!114 &-2695865679477045570
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

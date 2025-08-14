@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6089371693849795858}
   - component: {fileID: 7122420770886606130}
   - component: {fileID: -5170304615074142561}
-  - component: {fileID: 9130628590003179870}
+  - component: {fileID: -6714718804739284686}
   m_Layer: 0
   m_Name: BallPart
   m_TagString: Object
@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1
---- !u!114 &9130628590003179870
+--- !u!114 &-6714718804739284686
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

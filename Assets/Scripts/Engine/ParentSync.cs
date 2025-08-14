@@ -7,12 +7,15 @@ public class ParentSync : NetworkBehaviour
     [SyncVar(hook = nameof(OnParentChanged))]
     public uint parentNetId;
 
+    [SyncVar(hook = nameof(OnNameChanged))]
+    public string syncedName;
+
     Transform lastParent;
+    string lastName;
 
     public override void OnStartServer()
     {
-        UpdateParentNetId();
-        lastParent = transform.parent;
+        StartCoroutine(KeepUpdating());
     }
 
     private void UpdateParentNetId()
@@ -26,6 +29,8 @@ public class ParentSync : NetworkBehaviour
     {
         UpdateParentNetId();
         lastParent = transform.parent;
+        syncedName = gameObject.name;
+        lastName = syncedName;
     }
 
     private void OnParentChanged(uint oldNetId, uint newNetId)
@@ -53,13 +58,18 @@ public class ParentSync : NetworkBehaviour
         transform.SetParent(NetworkClient.spawned[netId].transform, true);
     }
 
-    [ServerCallback]
-    private void LateUpdate()
+    private void OnNameChanged(string oldName, string newName)
     {
-        if (transform.parent != lastParent)
+        gameObject.name = newName;
+    }
+
+    private IEnumerator KeepUpdating()
+    {
+        while (true)
         {
-            UpdateParentNetId();
-            lastParent = transform.parent;
+            ForceUpdate();
+            syncedName = gameObject.name;
+            yield return new WaitForSeconds(1f);
         }
     }
 }

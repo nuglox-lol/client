@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: -1779191300519436889}
   - component: {fileID: 5289936204198658672}
   - component: {fileID: 203473693470554685}
-  - component: {fileID: -2136942955141611468}
+  - component: {fileID: 4903734675789712394}
   m_Layer: 0
   m_Name: Part
   m_TagString: Object
@@ -262,7 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1
---- !u!114 &-2136942955141611468
+--- !u!114 &4903734675789712394
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

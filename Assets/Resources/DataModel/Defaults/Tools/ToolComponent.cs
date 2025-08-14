@@ -12,6 +12,7 @@ public class ToolComponent : NetworkBehaviour
     private Transform leftArm;
     private bool isEquipped = false;
     private Animator animator;
+    private ParentSync parentSync;
 
     public bool IsDisabled { get; set; } = false;
 
@@ -23,16 +24,9 @@ public class ToolComponent : NetworkBehaviour
 
     void Start()
     {
-        if (isServer)
-            pickupCooldown = 1f;
-            
+        parentSync = GetComponent<ParentSync>();
+        if (isServer) pickupCooldown = 1f;
         isEquipped = false;
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, pickupRange);
     }
 
     void Update()
@@ -40,8 +34,7 @@ public class ToolComponent : NetworkBehaviour
         if (isServer)
         {
             pickupCooldown -= Time.deltaTime;
-            if (!isEquipped)
-                CheckForPickupOverlapServer();
+            if (!isEquipped) CheckForPickupOverlapServer();
         }
 
         if (isClient && isEquipped && !isSwinging && Input.GetMouseButtonDown(0))
@@ -55,63 +48,47 @@ public class ToolComponent : NetworkBehaviour
 
     void CheckForPickupOverlapServer()
     {
-        if (pickupCooldown > 0f)
-            return;
+        if (pickupCooldown > 0f) return;
 
         Collider[] hits = Physics.OverlapSphere(transform.position, pickupRange, ~0, QueryTriggerInteraction.Collide);
         foreach (var hit in hits)
         {
             var root = hit.transform.root;
-            var objectClass = root.GetComponent<ObjectClass>();
-            if (objectClass != null && objectClass.className == "Player")
+            var player = root.GetComponent<Player>();
+            if (player != null)
             {
-                var connection = root.GetComponent<NetworkIdentity>()?.connectionToClient;
-                if (connection != null)
-                {
-                    if (!netIdentity.isOwned)
-                        netIdentity.AssignClientAuthority(connection);
-
-                    TargetAttachTool(connection);
-                    pickupCooldown = 1f;
-                    break;
-                }
+                AttachToPlayer(player);
+                pickupCooldown = 1f;
+                break;
             }
         }
     }
 
-    [TargetRpc]
-    void TargetAttachTool(NetworkConnection target)
+    [Server]
+    void AttachToPlayer(Player player)
     {
-        GameObject playerRoot = NetworkClient.localPlayer.gameObject;
-        var attachmentPoint = playerRoot.transform.Find("LeftArm/ToolAttachmentPoint");
+        Transform attachmentPoint = player.transform.Find("LeftArm/ToolAttachmentPoint");
         if (attachmentPoint == null) return;
 
         transform.SetParent(attachmentPoint, false);
-
+        transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
 
-        float zPos = transform.localScale.y * 1.42857f;
-        transform.localPosition = new Vector3(0, 0, zPos);
+        if (parentSync != null)
+            parentSync.ForceUpdate();
 
-        leftArm = playerRoot.transform.Find("LeftArm");
+        leftArm = player.transform.Find("LeftArm");
         animator = leftArm?.parent?.GetComponent<Animator>();
-
-        if (animator != null)
-        {
-            animator.ResetTrigger("Idle");
-            animator.SetTrigger("Tool");
-        }
 
         isEquipped = true;
 
-        OnEquipped?.Invoke(playerRoot);
+        RpcOnEquipped(player.netIdentity);
+        OnEquipped?.Invoke(player.gameObject);
     }
 
     void PlaySwingAnimation()
     {
-        if (animator == null && leftArm != null)
-            animator = leftArm.parent?.GetComponent<Animator>();
-
+        if (animator == null && leftArm != null) animator = leftArm.parent?.GetComponent<Animator>();
         if (animator != null)
         {
             animator.ResetTrigger("Idle");
@@ -132,46 +109,57 @@ public class ToolComponent : NetworkBehaviour
         DoActivate();
     }
 
+    [Server]
     void DoActivate()
     {
-        if (!isServer) return;
-
         OnActivated?.Invoke(gameObject);
         RpcActivate();
     }
 
     [ClientRpc]
-    void RpcActivate()
-    {
-    }
+    void RpcActivate() { }
 
     [Server]
     public void Unequip()
     {
-        if (netIdentity.connectionToClient != null)
-            netIdentity.RemoveClientAuthority();
-
         transform.SetParent(null, true);
-
         isEquipped = false;
-
         if (animator != null)
         {
             animator.ResetTrigger("Tool");
             animator.ResetTrigger("Swing");
             animator.SetTrigger("Idle");
         }
-
         leftArm = null;
         animator = null;
 
+        if (parentSync != null)
+            parentSync.ForceUpdate();
+
         RpcOnUnequipped();
+        OnUnequipped?.Invoke(gameObject);
     }
 
     [ClientRpc]
-    void RpcOnUnequipped()
+    void RpcOnUnequipped() { }
+
+    [ClientRpc]
+    void RpcOnEquipped(NetworkIdentity playerNetId)
     {
-        OnUnequipped?.Invoke(gameObject);
+        GameObject playerObj = playerNetId != null ? playerNetId.gameObject : null;
+        if (playerObj == null) return;
+        Transform attachmentPoint = playerObj.transform.Find("LeftArm/ToolAttachmentPoint");
+        if (attachmentPoint == null) return;
+        transform.SetParent(attachmentPoint, false);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+
+        if (parentSync != null)
+            parentSync.ForceUpdate();
+
+        leftArm = playerObj.transform.Find("LeftArm");
+        animator = leftArm?.parent?.GetComponent<Animator>();
+        isEquipped = true;
     }
 
     public void SetDisabled(bool disabled)

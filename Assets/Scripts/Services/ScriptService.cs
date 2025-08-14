@@ -52,6 +52,7 @@ public class ScriptService : NetworkBehaviour
         UserData.RegisterType<TouchedHandler>(InteropAccessMode.Default);
         UserData.RegisterType<LuaTweenService>(InteropAccessMode.Default);
         UserData.RegisterType<InstanceSound>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceTeam>(InteropAccessMode.Default);
 
         DynValue instanceNewFunc = DynValue.NewCallback((context, args) =>
         {
@@ -88,10 +89,6 @@ public class ScriptService : NetworkBehaviour
         GameObject gameObject = base.gameObject;
         object o = LuaInstance.GetCorrectInstance(gameObject, script);
         script.Globals["script"] = o != null ? UserData.Create(o) : DynValue.Nil;
-
-        GameObject parent = base.gameObject.transform.parent?.gameObject;
-        object o2 = LuaInstance.GetCorrectInstance(parent, script);
-        script.Globals["scriptParent"] = o2 != null ? UserData.Create(o2) : DynValue.Nil;
 
         Table gameTable = new Table(script);
         workspaceTable = new Table(script);

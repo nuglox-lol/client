@@ -42,6 +42,8 @@ public static class DataService
         public bool SoundLoop;
         public bool SoundPlayInWorld;
         public float SoundPitch;
+        public ColorSerializable TeamColor;
+        public string TeamName;
     }
 
     [System.Serializable]
@@ -165,6 +167,24 @@ public static class DataService
                 soundPitch = soundComp.Pitch;
             }
 
+            var teamComp = obj.GetComponent<Team>();
+
+            Color teamColor = new Color(0, 0, 0);
+            string teamName = "";
+
+            if(teamComp != null)
+            {
+                teamColor = teamComp.TeamColor;
+                teamName = teamComp.TeamName;
+            }
+
+            var spComp = obj.GetComponent<SpawnPoint>();
+
+            if(spComp != null)
+            {
+                teamName = spComp.teamName;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = obj.name,
@@ -196,7 +216,9 @@ public static class DataService
                 SoundTime = soundTime,
                 SoundLoop = soundLoop,
                 SoundPlayInWorld = soundPlayInWorld,
-                SoundPitch = soundPitch
+                SoundPitch = soundPitch,
+                TeamColor = new ColorSerializable(teamColor),
+                TeamName = teamName
             });
         }
 
@@ -488,6 +510,19 @@ public static class DataService
                 }
             }
 
+            var teamComp = obj.GetComponent<Team>();
+            if (teamComp != null)
+            {
+                teamComp.TeamName = data.TeamName;
+                teamComp.TeamColor = data.TeamColor.ToColor();
+            }
+
+            var spComp = obj.GetComponent<SpawnPoint>();
+            if (spComp != null)
+            {
+                spComp.teamName = data.TeamName;
+            }
+
             var nm = obj.GetComponent<NPCMovement>();
             if(nm != null)
             {
@@ -574,9 +609,9 @@ public static class DataService
             }
 
             string text3DText = null;
-            if (obj.GetComponent<ObjectClass>().className == "Text3D")
+            if (o.GetComponent<ObjectClass>().className == "Text3D")
             {
-                var text3D = obj.GetComponent<Text3DComponent>();
+                var text3D = o.GetComponent<Text3DComponent>();
                 if (text3D != null)
                 {
                     text3DText = text3D.GetText();
@@ -584,12 +619,12 @@ public static class DataService
             }
 
             string npcBehaviour = null;
-            if(obj.GetComponent<ObjectClass>().className == "NPC")
+            if(o.GetComponent<ObjectClass>().className == "NPC")
             {
-                npcBehaviour = obj.GetComponent<NPCMovement>().currentBehavior;
+                npcBehaviour = o.GetComponent<NPCMovement>().currentBehavior;
             }
 
-            var soundComp = obj.GetComponent<Sound>();
+            var soundComp = o.GetComponent<Sound>();
 
             int soundID = 0;
             bool soundIsPlaying = false;
@@ -610,6 +645,24 @@ public static class DataService
                 soundLoop = soundComp.Loop;
                 soundPlayInWorld = soundComp.PlayInWorld;
                 soundPitch = soundComp.Pitch;
+            }
+
+            var teamComp = o.GetComponent<Team>();
+
+            Color teamColor = new Color(0, 0, 0);
+            string teamName = "";
+
+            if(teamComp != null)
+            {
+                teamColor = teamComp.TeamColor;
+                teamName = teamComp.TeamName;
+            }
+
+            var spComp = o.GetComponent<SpawnPoint>();
+
+            if(spComp != null)
+            {
+                teamName = spComp.teamName;
             }
 
             saveData.Objects.Add(new SavedObjectData
@@ -643,7 +696,9 @@ public static class DataService
                 SoundTime = soundTime,
                 SoundLoop = soundLoop,
                 SoundPlayInWorld = soundPlayInWorld,
-                SoundPitch = soundPitch
+                SoundPitch = soundPitch,
+                TeamColor = new ColorSerializable(teamColor),
+                TeamName = teamName
             });
 
             foreach (Transform child in o.transform)

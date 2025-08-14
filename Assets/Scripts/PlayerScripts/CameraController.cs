@@ -26,21 +26,21 @@ public class CameraController : MonoBehaviour
     private Vector2 lastTouchPos;
     private bool isTouching;
 
+    private int joystickLayer;
+
     private void Awake()
     {
         isMobile = Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer;
+        joystickLayer = LayerMask.NameToLayer("Joystick");
     }
 
     private void Start()
     {
         shiftLockIcon = GameObject.Find("CoreGui/ShiftLock");
-
         Camera cam = GetComponent<Camera>();
         if (cam != null) cam.enabled = true;
-
         AudioListener listener = GetComponent<AudioListener>();
         if (listener != null) listener.enabled = true;
-
         currentZoom = maxZoom;
         gameObject.tag = "MainCamera";
         if (shiftLockIcon) shiftLockIcon.SetActive(false);
@@ -65,7 +65,6 @@ public class CameraController : MonoBehaviour
         Vector3 startPos = transform.position;
         Quaternion startRot = transform.rotation;
         float elapsed = 0f;
-
         while (elapsed < duration)
         {
             float t = elapsed / duration;
@@ -74,7 +73,6 @@ public class CameraController : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-
         transform.position = endPos;
         transform.rotation = endRot;
     }
@@ -162,7 +160,7 @@ public class CameraController : MonoBehaviour
         }
         else if (cameraMode == CameraMode.Mode2D)
         {
-            transform.GetComponent<Camera>().orthographic = true;
+            GetComponent<Camera>().orthographic = true;
             transform.position = focusPoint + new Vector3(0, 0, -10);
             transform.rotation = Quaternion.Euler(0, 0, 0);
         }
@@ -175,5 +173,16 @@ public class CameraController : MonoBehaviour
                 target.rotation = Quaternion.Slerp(target.rotation, Quaternion.LookRotation(lookDir), Time.deltaTime * 20f);
             }
         }
+    }
+
+    public bool RaycastIgnoreJoystick(Ray ray, out RaycastHit hit, float maxDistance)
+    {
+        if (Physics.Raycast(ray, out hit, maxDistance))
+        {
+            if (hit.collider.gameObject.layer == joystickLayer)
+                return false;
+            return true;
+        }
+        return false;
     }
 }

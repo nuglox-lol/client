@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -481924063383719710}
   - component: {fileID: 1633976304263532986}
   - component: {fileID: 5393513367341826914}
-  - component: {fileID: -3311449337619441758}
+  - component: {fileID: 2400738912008746738}
   m_Layer: 0
   m_Name: Script
   m_TagString: Object
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1
---- !u!114 &-3311449337619441758
+--- !u!114 &2400738912008746738
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
