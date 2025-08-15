@@ -27,6 +27,8 @@ public static class LuaInstance
                     return new InstanceSound(go);
                 case "Team":
                     return new InstanceTeam(go, luaScript);
+                case "Mesh":
+                    return new InstanceMesh(go);
                 default:
                     return new InstanceDatamodel(go, luaScript);
             }

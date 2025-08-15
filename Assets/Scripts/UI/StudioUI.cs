@@ -536,6 +536,14 @@ public class StudioUI : MonoBehaviour
                 if (ImGui.InputText("Team Name", ref teamName, 64)) sp.teamName = teamName;
             }
 
+            if (selectedObject.GetComponent<ObjectClass>().className == "Mesh")
+            {
+                var mc = selectedObject.GetComponent<MeshComponent>();
+
+                int meshID = mc.meshID;
+                if (ImGui.InputInt("MeshID", ref meshID, 64)) mc.meshID = meshID;
+            }
+
             if (selectedObject.transform.parent != null)
             {
                 if (ImGui.Button("Unparent")) selectedObject.transform.SetParent(null);

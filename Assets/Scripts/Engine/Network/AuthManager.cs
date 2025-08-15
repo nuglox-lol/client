@@ -3,6 +3,7 @@ using UnityEngine;
 using Mirror;
 using Mirror.SimpleWeb;
 using UnityEngine.Networking;
+using TMPro;
 
 public struct AuthKeyMessage : NetworkMessage
 {
@@ -14,6 +15,9 @@ public class AuthManager : NetworkManager
     private bool hadPlayers = false;
     private bool checkingEmpty = false;
     private float emptyCheckDelay = 40f;
+    private GameObject loadingPanel;
+    private TMP_Text titleText;
+    private TMP_Text creatorText;
 
     void Start()
     {
@@ -89,19 +93,48 @@ public class AuthManager : NetworkManager
 
     public override void OnClientConnect()
     {
-        Debug.Log("OnClientConnect called");
         base.OnClientConnect();
+        loadingPanel = GameObject.Find("CoreGui/LoadingPanel");
+        if (loadingPanel != null)
+        {
+            titleText = loadingPanel.transform.Find("Title").GetComponent<TMP_Text>();
+            creatorText = loadingPanel.transform.Find("Creator").GetComponent<TMP_Text>();
+            loadingPanel.SetActive(true);
+            StartCoroutine(LoadGameInfo());
+        }
+
         string authKey = GetArgs.Get("authkey");
         if (!string.IsNullOrEmpty(authKey))
         {
-            Debug.Log("Sending auth key: " + authKey);
             NetworkClient.Send(new AuthKeyMessage { authKey = authKey });
         }
     }
 
+    private IEnumerator LoadGameInfo()
+    {
+        string url = GetArgs.Get("baseUrl") + "v1/game/getinfo.php";
+        using UnityWebRequest www = UnityWebRequest.Get(url);
+        yield return www.SendWebRequest();
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            string json = www.downloadHandler.text;
+            GameInfo info = JsonUtility.FromJson<GameInfo>(json);
+            if (titleText != null) titleText.text = info.Title;
+            if (creatorText != null) creatorText.text = info.Creator;
+        }
+        yield return new WaitForSeconds(3f);
+        if (loadingPanel != null) loadingPanel.SetActive(false);
+    }
+
+    [System.Serializable]
+    private class GameInfo
+    {
+        public string Title;
+        public string Creator;
+    }
+
     public override void OnClientDisconnect()
     {
-        Debug.Log("OnClientDisconnect called");
         base.OnClientDisconnect();
     }
 
@@ -110,9 +143,9 @@ public class AuthManager : NetworkManager
         base.OnStartServer();
         string url = GetArgs.Get("baseUrl") + "placefiles/" + GetArgs.Get("gameid") + ".npf";
         DataService.LoadURL(url, true);
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         DataService.LoadURL("https://nuglox.com/placefiles/1.bpf", true);
-        #endif
+#endif
         NetworkServer.RegisterHandler<AuthKeyMessage>(OnAuthKeyMessageReceived, false);
     }
 
@@ -141,15 +174,8 @@ public class AuthManager : NetworkManager
             playerComponent.characterAppearanceId = authResponse.userid;
             player.name = authResponse.username;
         }
-        else
-        {
-            Debug.LogWarning($"Connection {conn.connectionId} has no player object assigned yet!");
-        }
-
         NetworkServer.SetClientReady(conn);
-
         hadPlayers = true;
-
         StartCoroutine(SendWebRequest(GetArgs.Get("baseUrl") + "v1/gameserver/add.php?password=" + GetArgs.Get("password") + "&gameid=" + GetArgs.Get("gameid")));
     }
 
@@ -162,7 +188,6 @@ public class AuthManager : NetworkManager
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
         base.OnServerAddPlayer(conn);
-
         GameObject player = conn.identity.gameObject;
         StartCoroutine(DelayedDefaultsLoad(player));
     }
@@ -170,7 +195,6 @@ public class AuthManager : NetworkManager
     private IEnumerator DelayedDefaultsLoad(GameObject player)
     {
         yield return new WaitForSeconds(0.25f);
-
         PlayerDefaults defaults = FindObjectOfType<PlayerDefaults>();
         if (defaults != null)
         {
@@ -189,10 +213,9 @@ public class AuthManager : NetworkManager
         {
             if (hadPlayers)
             {
-                StartCoroutine(SendWebRequest(GetArgs.Get("baseurl") + "v1/gameserver/close.php?password=" + GetArgs.Get("password") + "&gameid=" + GetArgs.Get("gameid")));
+                StartCoroutine(SendWebRequest(GetArgs.Get("baseUrl") + "v1/gameserver/close.php?password=" + GetArgs.Get("password") + "&gameid=" + GetArgs.Get("gameid")));
             }
         }
-
         StartCoroutine(SendWebRequest(GetArgs.Get("baseUrl") + "v1/gameserver/remove.php?password=" + GetArgs.Get("password") + "&gameid=" + GetArgs.Get("gameid")));
     }
 
@@ -203,7 +226,7 @@ public class AuthManager : NetworkManager
         yield return new WaitForSeconds(emptyCheckDelay);
         if (!hadPlayers && NetworkServer.connections.Count == 0)
         {
-            StartCoroutine(SendWebRequest(GetArgs.Get("baseurl") + "v1/gameserver/close.php?password=" + GetArgs.Get("password") + "&gameid=" + GetArgs.Get("gameid")));
+            StartCoroutine(SendWebRequest(GetArgs.Get("baseUrl") + "v1/gameserver/close.php?password=" + GetArgs.Get("password") + "&gameid=" + GetArgs.Get("gameid")));
         }
     }
 

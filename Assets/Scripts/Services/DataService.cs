@@ -44,6 +44,7 @@ public static class DataService
         public float SoundPitch;
         public ColorSerializable TeamColor;
         public string TeamName;
+        public int MeshID;
     }
 
     [System.Serializable]
@@ -185,6 +186,15 @@ public static class DataService
                 teamName = spComp.teamName;
             }
 
+            var mComp = obj.GetComponent<MeshComponent>();
+
+            int meshId = 0;
+
+            if(mComp != null)
+            {
+                meshId = mComp.meshID;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = obj.name,
@@ -218,7 +228,8 @@ public static class DataService
                 SoundPlayInWorld = soundPlayInWorld,
                 SoundPitch = soundPitch,
                 TeamColor = new ColorSerializable(teamColor),
-                TeamName = teamName
+                TeamName = teamName,
+                MeshID = meshId
             });
         }
 
@@ -517,6 +528,12 @@ public static class DataService
                 teamComp.TeamColor = data.TeamColor.ToColor();
             }
 
+            var mComp = obj.GetComponent<MeshComponent>();
+            if(mComp != null)
+            {
+                mComp.meshID = data.MeshID;
+            }
+
             var spComp = obj.GetComponent<SpawnPoint>();
             if (spComp != null)
             {
@@ -665,6 +682,15 @@ public static class DataService
                 teamName = spComp.teamName;
             }
 
+            var mComp = obj.GetComponent<MeshComponent>();
+
+            int meshId = 0;
+
+            if(mComp != null)
+            {
+                meshId = mComp.meshID;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = o.name,
@@ -698,7 +724,8 @@ public static class DataService
                 SoundPlayInWorld = soundPlayInWorld,
                 SoundPitch = soundPitch,
                 TeamColor = new ColorSerializable(teamColor),
-                TeamName = teamName
+                TeamName = teamName,
+                MeshID = meshId
             });
 
             foreach (Transform child in o.transform)

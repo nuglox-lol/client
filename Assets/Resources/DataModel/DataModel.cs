@@ -27,7 +27,8 @@ public static class DataModel
         "ToolAttachmentPoint",
         "Sound",
         "Team",
-        "SpawnPoint"
+        "SpawnPoint",
+        "Mesh"
     };
 
     public static GameObject LoadDataModel(string className)
