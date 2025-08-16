@@ -38,6 +38,11 @@ public class Player : NetworkBehaviour
 #endif
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+    }
+
     void Update()
     {
         if (isLocalPlayer && health < 1 && !isDead)

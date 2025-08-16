@@ -28,7 +28,10 @@ public static class DataModel
         "Sound",
         "Team",
         "SpawnPoint",
-        "Mesh"
+        "Mesh",
+        "PlayerGUI",
+        "Text",
+        "Panel"
     };
 
     public static GameObject LoadDataModel(string className)

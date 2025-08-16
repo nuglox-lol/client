@@ -1034,7 +1034,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.000030517578, y: -0.000046540958}
   m_SizeDelta: {x: 0, y: 605.6443}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &309152019
@@ -2517,7 +2517,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &793034805
 Transform:
   m_ObjectHideFlags: 0
@@ -2597,11 +2597,13 @@ MonoBehaviour:
   - {fileID: 2854521769487671702, guid: 9c6226912d9342b42a09559898fb549e, type: 3}
   - {fileID: 2769521522580540343, guid: d60fc9e73520f7e4da01446893f20cd1, type: 3}
   - {fileID: 3933645318877831748, guid: 67d8dfd1b04a6ed468bb4e0e4c26e143, type: 3}
+  - {fileID: 1251521961921655214, guid: 9fabfcf614c32834a89eb1b8738cf062, type: 3}
   - {fileID: 4957806643763680526, guid: 88ddd344978210549b8b3735da4bd2bf, type: 3}
   - {fileID: 1141785902744398573, guid: e94b5da2886975a42951e6f9e5a5a629, type: 3}
   - {fileID: 4518463532970771655, guid: c7618bf1ca6865d4b97c2142769fbf78, type: 3}
   - {fileID: 2769521522580540343, guid: 9c2a426137951d445a85161ae80433ba, type: 3}
   - {fileID: 5427359261294590153, guid: 0dff599fd4ebe1c4ea1dde3f3e81649f, type: 3}
+  - {fileID: 1397330253373145889, guid: 465de5073583f394c8e0b31015167807, type: 3}
   - {fileID: 3996517495200161483, guid: 7e597ea5045fcc84e8fae6d35080305d, type: 3}
   - {fileID: 9057342335287344021, guid: 8b54e95f84bd70445b285fe2cad23cc0, type: 3}
   - {fileID: 3683885264096075173, guid: c8727b6e6681e9e4f8e205606eb5937d, type: 3}
@@ -5288,6 +5290,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1708871929}
   m_CullTransparentMesh: 1
+--- !u!1 &1739705770
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1739705772}
+  - component: {fileID: 1739705771}
+  m_Layer: 1
+  m_Name: Post Processing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1739705771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739705770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 11400000, guid: a8cc756b13f10fb4a8f7c7ec661bc14e, type: 2}
+  isGlobal: 1
+  blendDistance: 0
+  weight: 1
+  priority: 0
+--- !u!4 &1739705772
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739705770}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 703.59894, y: 261.4524, z: -14.441036}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1740113285
 GameObject:
   m_ObjectHideFlags: 0
@@ -6216,7 +6267,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1936054439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6281,6 +6332,8 @@ MonoBehaviour:
   - {fileID: 2769521522580540343, guid: 9c2a426137951d445a85161ae80433ba, type: 3}
   - {fileID: 5427359261294590153, guid: 0dff599fd4ebe1c4ea1dde3f3e81649f, type: 3}
   - {fileID: 2353043741027098809, guid: 711e5dbdc5ec0ce418e738bdf5ab924f, type: 3}
+  - {fileID: 1251521961921655214, guid: 9fabfcf614c32834a89eb1b8738cf062, type: 3}
+  - {fileID: 1397330253373145889, guid: 465de5073583f394c8e0b31015167807, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -7150,3 +7203,4 @@ SceneRoots:
   - {fileID: 990856458}
   - {fileID: 704018128}
   - {fileID: 1429147805}
+  - {fileID: 1739705772}

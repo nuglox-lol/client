@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 using System.Collections;
 using Mirror;
+using TMPro;
 
 public static class DataService
 {
@@ -45,6 +46,7 @@ public static class DataService
         public ColorSerializable TeamColor;
         public string TeamName;
         public int MeshID;
+        public string Text;
     }
 
     [System.Serializable]
@@ -132,10 +134,10 @@ public static class DataService
             string text3DText = null;
             if (obj.GetComponent<ObjectClass>().className == "Text3D")
             {
-                var text3D = obj.GetComponent<Text3DComponent>();
-                if (text3D != null)
+                var text3Dd = obj.GetComponent<Text3DComponent>();
+                if (text3Dd != null)
                 {
-                    text3DText = text3D.GetText();
+                    text3DText = text3Dd.GetText();
                 }
             }
 
@@ -195,6 +197,11 @@ public static class DataService
                 meshId = mComp.meshID;
             }
 
+            string text = null;
+            var text3D = obj.GetComponent<TMP_Text>();
+            if (text3D != null)
+                text = obj.GetComponent<TMP_Text>().text;
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = obj.name,
@@ -229,7 +236,8 @@ public static class DataService
                 SoundPitch = soundPitch,
                 TeamColor = new ColorSerializable(teamColor),
                 TeamName = teamName,
-                MeshID = meshId
+                MeshID = meshId,
+                Text = text
             });
         }
 
@@ -545,6 +553,12 @@ public static class DataService
             {
                 nm.currentBehavior = data.NPCBehaviour;
             }
+
+            var tmpro = obj.GetComponent<TMP_Text>();
+            if(tmpro != null)
+            {
+                tmpro.text = data.Text;
+            }
         }
 
         if (!hasPlayerDefaults)
@@ -628,10 +642,10 @@ public static class DataService
             string text3DText = null;
             if (o.GetComponent<ObjectClass>().className == "Text3D")
             {
-                var text3D = o.GetComponent<Text3DComponent>();
-                if (text3D != null)
+                var text3Dd = o.GetComponent<Text3DComponent>();
+                if (text3Dd != null)
                 {
-                    text3DText = text3D.GetText();
+                    text3DText = text3Dd.GetText();
                 }
             }
 
@@ -682,7 +696,7 @@ public static class DataService
                 teamName = spComp.teamName;
             }
 
-            var mComp = obj.GetComponent<MeshComponent>();
+            var mComp = o.GetComponent<MeshComponent>();
 
             int meshId = 0;
 
@@ -690,6 +704,11 @@ public static class DataService
             {
                 meshId = mComp.meshID;
             }
+
+            string text = null;
+            var text3D = o.GetComponent<TMP_Text>();
+            if (text3D != null)
+                text = o.GetComponent<TMP_Text>().text;
 
             saveData.Objects.Add(new SavedObjectData
             {
@@ -725,7 +744,8 @@ public static class DataService
                 SoundPitch = soundPitch,
                 TeamColor = new ColorSerializable(teamColor),
                 TeamName = teamName,
-                MeshID = meshId
+                MeshID = meshId,
+                Text = text
             });
 
             foreach (Transform child in o.transform)

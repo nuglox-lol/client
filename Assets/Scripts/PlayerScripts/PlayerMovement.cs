@@ -8,6 +8,7 @@ public class PlayerMovement : NetworkBehaviour
     private bool isMobile = false;
     [SyncVar] public float speed = 8f;
     [SyncVar] public float jumpForce = 8f;
+    [SyncVar] public bool CanMove = true;
 
     private Transform cam;
     private Animator animator;
@@ -19,21 +20,19 @@ public class PlayerMovement : NetworkBehaviour
     private GameObject jumpButton;
     private bool jumpPressed;
 
-    [SyncVar]
-    public bool CanMove = true;
+    [SerializeField] private float stepHeight = 2f;
+    [SerializeField] private float stepSmooth = 0.1f;
+    [SerializeField] private float stepCheckDistance = 0.5f;
 
     private void Awake()
     {
         isMobile = Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer;
-
         if (!isMobile)
         {
             var js = GameObject.Find("CoreGui/Joystick");
-            if (js != null)
-                js.SetActive(false);
+            if (js != null) js.SetActive(false);
             var jb = GameObject.Find("CoreGui/Jump");
-            if (jb != null)
-                jb.SetActive(false);
+            if (jb != null) jb.SetActive(false);
         }
     }
 
@@ -43,13 +42,11 @@ public class PlayerMovement : NetworkBehaviour
 
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
-
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody>();
             rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
-
         if (!isLocalPlayer && !isStudio)
         {
             enabled = false;
@@ -66,12 +63,10 @@ public class PlayerMovement : NetworkBehaviour
             {
                 var eventTrigger = jumpButton.GetComponent<EventTrigger>();
                 if (eventTrigger == null) eventTrigger = jumpButton.AddComponent<EventTrigger>();
-
                 var entryDown = new EventTrigger.Entry { eventID = EventTriggerType.PointerDown };
                 entryDown.callback.AddListener(e => { jumpPressed = true; });
                 var entryUp = new EventTrigger.Entry { eventID = EventTriggerType.PointerUp };
                 entryUp.callback.AddListener(e => { jumpPressed = false; });
-
                 eventTrigger.triggers.Add(entryDown);
                 eventTrigger.triggers.Add(entryUp);
             }
@@ -88,18 +83,14 @@ public class PlayerMovement : NetworkBehaviour
     private void SpawnPlayerCamera()
     {
         if (!isLocalPlayer && !isStudio) return;
-
         GameObject prefab = Resources.Load<GameObject>("MainCameraPrefab");
         if (prefab == null) return;
-
         GameObject cameraInstance = Instantiate(prefab);
         cameraInstance.name = "PlayerCamera";
         cam = cameraInstance.transform;
-
         Camera camComponent = cam.GetComponent<Camera>();
         if (camComponent == null) return;
         if (isStudio) camComponent.fieldOfView = 95f;
-
         CameraController controller = cam.GetComponent<CameraController>();
         if (controller != null) controller.SetTarget(transform);
     }
@@ -130,7 +121,6 @@ public class PlayerMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!isLocalPlayer && !isStudio) return;
-
         if (!CanMove) return;
 
         if (input.sqrMagnitude > 0.01f)
@@ -138,12 +128,12 @@ public class PlayerMovement : NetworkBehaviour
             Vector3 forward = cam.forward;
             forward.y = 0f;
             forward.Normalize();
-
             Vector3 right = cam.right;
             right.y = 0f;
             right.Normalize();
-
             Vector3 moveDir = (forward * input.z + right * input.x).normalized;
+
+            HandleStepClimb(moveDir);
 
             CmdMove(moveDir);
 
@@ -176,6 +166,24 @@ public class PlayerMovement : NetworkBehaviour
         }
 
         animator?.SetBool("IsJumping", !isGrounded);
+    }
+
+    private void HandleStepClimb(Vector3 moveDir)
+    {
+        if (rb == null) return;
+
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+        RaycastHit hit;
+
+        if (Physics.Raycast(origin, moveDir, out hit, stepCheckDistance))
+        {
+            Vector3 stepUpOrigin = new Vector3(hit.point.x, hit.collider.bounds.max.y + 0.1f, hit.point.z);
+            if (!Physics.Raycast(stepUpOrigin, moveDir, stepCheckDistance))
+            {
+                Vector3 targetPos = rb.position + Vector3.up * Mathf.Min(stepHeight, hit.collider.bounds.max.y - transform.position.y);
+                rb.MovePosition(Vector3.Lerp(rb.position, targetPos, stepSmooth));
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
