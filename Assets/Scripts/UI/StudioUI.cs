@@ -6,6 +6,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
 using System.Linq;
+using TMPro;
 
 public class StudioUI : MonoBehaviour
 {   
@@ -542,6 +543,14 @@ public class StudioUI : MonoBehaviour
 
                 int meshID = mc.meshID;
                 if (ImGui.InputInt("MeshID", ref meshID, 64)) mc.meshID = meshID;
+            }
+
+            if (selectedObject.GetComponent<ObjectClass>().className == "Text")
+            {
+                var tc = selectedObject.GetComponent<TMP_Text>();
+
+                string text = tc.text;
+                if (ImGui.InputText("Text", ref text, 64)) tc.text = text;
             }
 
             if (selectedObject.transform.parent != null)
