@@ -14,6 +14,7 @@ public class PlayerMovement : NetworkBehaviour
     private Animator animator;
     private Rigidbody rb;
     private bool isGrounded;
+    private bool climbing;
     private Vector3 input;
 
     private GameObject joystick;
@@ -22,7 +23,6 @@ public class PlayerMovement : NetworkBehaviour
 
     [SerializeField] private float stepHeight = 2f;
     [SerializeField] private float stepSmooth = 0.1f;
-    [SerializeField] private float stepCheckDistance = 0.5f;
 
     private void Awake()
     {
@@ -73,13 +73,6 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    public void Move(Vector3 moveDir)
-    {
-        if (rb == null || !CanMove) return;
-        Vector3 velocity = moveDir * speed;
-        rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);
-    }
-
     private void SpawnPlayerCamera()
     {
         if (!isLocalPlayer && !isStudio) return;
@@ -123,35 +116,23 @@ public class PlayerMovement : NetworkBehaviour
         if (!isLocalPlayer && !isStudio) return;
         if (!CanMove) return;
 
-        if (input.sqrMagnitude > 0.01f)
-        {
-            Vector3 forward = cam.forward;
-            forward.y = 0f;
-            forward.Normalize();
-            Vector3 right = cam.right;
-            right.y = 0f;
-            right.Normalize();
-            Vector3 moveDir = (forward * input.z + right * input.x).normalized;
+        Vector3 forward = cam.forward;
+        forward.y = 0f;
+        forward.Normalize();
+        Vector3 right = cam.right;
+        right.y = 0f;
+        right.Normalize();
+        Vector3 moveDir = (forward * input.z + right * input.x).normalized;
 
-            HandleStepClimb(moveDir);
+        HandleStepClimb(moveDir);
 
-            CmdMove(moveDir);
-
-            animator?.SetBool("IsWalking", true);
-            Quaternion targetRotation = Quaternion.LookRotation(moveDir, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
-        }
-        else
-        {
-            CmdStop();
-            animator?.SetBool("IsWalking", false);
-        }
+        Move(moveDir);
 
         if (isMobile)
         {
             if (jumpPressed && isGrounded)
             {
-                CmdJump(jumpForce);
+                rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
                 isGrounded = false;
                 jumpPressed = false;
             }
@@ -160,55 +141,81 @@ public class PlayerMovement : NetworkBehaviour
         {
             if (Input.GetButtonDown("Jump") && isGrounded)
             {
-                CmdJump(jumpForce);
+                rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
                 isGrounded = false;
             }
         }
 
+        animator?.SetBool("IsWalking", input.sqrMagnitude > 0.01f);
         animator?.SetBool("IsJumping", !isGrounded);
+        animator?.SetBool("Climbing", climbing);
+
+        rb.useGravity = !climbing;
     }
 
     private void HandleStepClimb(Vector3 moveDir)
     {
         if (rb == null) return;
 
-        Vector3 origin = transform.position + Vector3.up * 0.1f;
-        RaycastHit hit;
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+        float distance = 5.5f - origin.y;
 
-        if (Physics.Raycast(origin, moveDir, out hit, stepCheckDistance))
+        RaycastHit hitLower;
+
+        Debug.DrawRay(origin, moveDir * distance, Color.red);
+
+        if (Physics.Raycast(origin, moveDir, out hitLower, distance))
         {
-            Vector3 stepUpOrigin = new Vector3(hit.point.x, hit.collider.bounds.max.y + 0.1f, hit.point.z);
-            if (!Physics.Raycast(stepUpOrigin, moveDir, stepCheckDistance))
-            {
-                Vector3 targetPos = rb.position + Vector3.up * Mathf.Min(stepHeight, hit.collider.bounds.max.y - transform.position.y);
-                rb.MovePosition(Vector3.Lerp(rb.position, targetPos, stepSmooth));
-            }
+            Vector3 stepUp = Vector3.up * stepHeight;
+            rb.MovePosition(rb.position + stepUp);
+            rb.AddForce(transform.forward * -6, ForceMode.Impulse);
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        climbing = false;
         foreach (ContactPoint contact in collision.contacts)
         {
-            if (contact.normal.y > 0.01f)
+            float stepDelta = contact.point.y - transform.position.y;
+            if (stepDelta > 0 && stepDelta <= stepHeight)
             {
-                isGrounded = true;
-                break;
+                rb.position += new Vector3(0, stepDelta, 0);
+                climbing = true;
             }
+
+            if (contact.normal.y > 0.01f)
+                isGrounded = true;
         }
     }
 
     private void OnCollisionExit(Collision collision)
     {
+        climbing = false;
         isGrounded = false;
+    }
+
+    public void Move(Vector3 moveDir)
+    {
+        if (rb == null || !CanMove) return;
+
+        if (moveDir.sqrMagnitude > 0.01f)
+        {
+            rb.velocity = new Vector3(moveDir.x * speed, rb.velocity.y, moveDir.z * speed);
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
+        else
+        {
+            rb.velocity = new Vector3(0f, rb.velocity.y, 0f);
+        }
     }
 
     [Command]
     private void CmdMove(Vector3 moveDir)
     {
         if (rb == null || !CanMove) return;
-        Vector3 velocity = moveDir * speed;
-        rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);
+        rb.velocity = new Vector3(moveDir.x * speed, rb.velocity.y, moveDir.z * speed);
     }
 
     [Command]
