@@ -517,6 +517,10 @@ public class StudioUI : MonoBehaviour
             {
                 var team = selectedObject.GetComponent<Team>();
 
+                ImGui.Separator();
+                ImGui.Text("Team Settings");
+                ImGui.Text("");
+
                 string teamName = team.TeamName;
                 if (ImGui.InputText("Team Name", ref teamName, 64)) team.TeamName = teamName;
 
@@ -533,6 +537,10 @@ public class StudioUI : MonoBehaviour
             {
                 var sp = selectedObject.GetComponent<SpawnPoint>();
 
+                ImGui.Separator();
+                ImGui.Text("SpawnPoint Settings");
+                ImGui.Text("");
+
                 string teamName = sp.teamName;
                 if (ImGui.InputText("Team Name", ref teamName, 64)) sp.teamName = teamName;
             }
@@ -540,6 +548,10 @@ public class StudioUI : MonoBehaviour
             if (selectedObject.GetComponent<ObjectClass>().className == "Mesh")
             {
                 var mc = selectedObject.GetComponent<MeshComponent>();
+
+                ImGui.Separator();
+                ImGui.Text("Mesh Settings");
+                ImGui.Text("");
 
                 int meshID = mc.meshID;
                 if (ImGui.InputInt("MeshID", ref meshID, 64)) mc.meshID = meshID;
@@ -549,8 +561,99 @@ public class StudioUI : MonoBehaviour
             {
                 var tc = selectedObject.GetComponent<TMP_Text>();
 
+                ImGui.Separator();
+                ImGui.Text("Text Settings");
+                ImGui.Text("");
+
                 string text = tc.text;
                 if (ImGui.InputText("Text", ref text, 64)) tc.text = text;
+            }
+
+            if (selectedObject.GetComponent<ObjectClass>().className == "Light")
+            {
+                var lightComp = selectedObject.GetComponent<LightComponent>();
+
+                ImGui.Separator();
+                ImGui.Text("Light Settings");
+                ImGui.Text("");
+
+                Vector3 rot2 = lightComp.Rotation;
+                if (ImGui.InputFloat3("Rotation", ref rot2))
+                    lightComp.Rotation = rot2;
+
+                float intensity = lightComp.Exposure;
+                if (ImGui.InputFloat("Exposure", ref intensity))
+                    lightComp.Exposure = intensity;
+
+                Color color = lightComp.Tint;
+                Vector4 colVec = new Vector4(color.r, color.g, color.b, color.a);
+                if (ImGui.ColorEdit4("Tint", ref colVec))
+                    lightComp.Tint = new Color(colVec.x, colVec.y, colVec.z, colVec.w);
+            }
+
+            if (selectedObject.GetComponent<ObjectClass>().className == "Sky")
+            {
+                var skyComp = selectedObject.GetComponent<Sky>();
+
+                ImGui.Separator();
+                ImGui.Text("Sky Settings");
+                ImGui.Text("");
+
+                int texId = skyComp.id;
+                if(ImGui.InputInt("TextureID", ref texId))
+                    skyComp.id = texId;
+            }
+
+            if (selectedObject.GetComponent<ObjectClass>().className == "IntValue")
+            {
+                var valueComp = selectedObject.GetComponent<IntValue>();
+
+                ImGui.Separator();
+                ImGui.Text("IntValue Settings");
+                ImGui.Text("");
+
+                int valuee = valueComp.Value;
+                if(ImGui.InputInt("Value", ref valuee))
+                    valueComp.Value = valuee;
+            }
+
+            if (selectedObject.GetComponent<ObjectClass>().className == "StringValue")
+            {
+                var valueComp = selectedObject.GetComponent<StringValue>();
+
+                ImGui.Separator();
+                ImGui.Text("StringValue Settings");
+                ImGui.Text("");
+
+                string valuee = valueComp.Value;
+                if(ImGui.InputText("Value", ref valuee, 64))
+                    valueComp.Value = valuee;
+            }
+
+            if (selectedObject.GetComponent<ObjectClass>().className == "FloatValue")
+            {
+                var valueComp = selectedObject.GetComponent<FloatValue>();
+
+                ImGui.Separator();
+                ImGui.Text("FloatValue Settings");
+                ImGui.Text("");
+
+                float valuee = valueComp.Value;
+                if(ImGui.InputFloat("Value", ref valuee))
+                    valueComp.Value = valuee;
+            }
+
+            if (selectedObject.GetComponent<ObjectClass>().className == "BoolValue")
+            {
+                var valueComp = selectedObject.GetComponent<BoolValue>();
+
+                ImGui.Separator();
+                ImGui.Text("BoolValue Settings");
+                ImGui.Text("");
+
+                bool valuee = valueComp.Value;
+                if(ImGui.Checkbox("Value", ref valuee))
+                    valueComp.Value = valuee;
             }
 
             if (selectedObject.transform.parent != null)

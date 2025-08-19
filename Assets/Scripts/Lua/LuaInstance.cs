@@ -29,6 +29,22 @@ public static class LuaInstance
                     return new InstanceTeam(go, luaScript);
                 case "Mesh":
                     return new InstanceMesh(go);
+                case "Light":
+                    return new InstanceLight(go);
+                case "Sky":
+                    return new InstanceSky(go);
+                case "IntValue":
+                    return new InstanceIntValue(go);
+                case "StringValue":
+                    return new InstanceStringValue(go);
+                case "BoolValue":
+                    return new InstanceBoolValue(go);
+                case "FloatValue":
+                    return new InstanceFloatValue(go);
+                case "ClickDetector":
+                    return new InstanceClickDetector(go, luaScript);
+                case "Decal":
+                    return new InstanceDecal(go);
                 default:
                     return new InstanceDatamodel(go, luaScript);
             }

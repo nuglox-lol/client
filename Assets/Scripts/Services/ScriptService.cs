@@ -22,6 +22,7 @@ public class ScriptService : NetworkBehaviour
     private bool workspaceInitialized = false;
     private Dictionary<string, InstanceDatamodel> trackedInstances = new();
     private HashSet<string> currentFrameKeys = new();
+    public string ServiceId;
 
     public void Init(Dictionary<string, object> globals = null)
     {
@@ -53,6 +54,14 @@ public class ScriptService : NetworkBehaviour
         UserData.RegisterType<LuaTweenService>(InteropAccessMode.Default);
         UserData.RegisterType<InstanceSound>(InteropAccessMode.Default);
         UserData.RegisterType<InstanceTeam>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceLight>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceSky>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceIntValue>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceStringValue>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceBoolValue>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceFloatValue>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceClickDetector>(InteropAccessMode.Default);
+        UserData.RegisterType<InstanceDecal>(InteropAccessMode.Default);
 
         DynValue instanceNewFunc = DynValue.NewCallback((context, args) =>
         {
@@ -89,6 +98,7 @@ public class ScriptService : NetworkBehaviour
         GameObject gameObject = base.gameObject;
         object o = LuaInstance.GetCorrectInstance(gameObject, script);
         script.Globals["script"] = o != null ? UserData.Create(o) : DynValue.Nil;
+        script.Globals["RemoteScript"] = UserData.Create(this);
 
         Table gameTable = new Table(script);
         workspaceTable = new Table(script);

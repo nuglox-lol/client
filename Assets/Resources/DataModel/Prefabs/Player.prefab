@@ -74,7 +74,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4, y: 5.5, z: 1.2}
+  m_Size: {x: 4, y: 5.4, z: 1.2}
   m_Center: {x: 0, y: 2.7, z: 0}
 --- !u!136 &7865812498200680413
 CapsuleCollider:
@@ -400,8 +400,6 @@ MonoBehaviour:
   speed: 8
   jumpForce: 8
   CanMove: 1
-  stepHeight: 0.5
-  stepSmooth: 0.1
 --- !u!114 &-7533796895755386870
 MonoBehaviour:
   m_ObjectHideFlags: 0

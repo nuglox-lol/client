@@ -31,7 +31,14 @@ public static class DataModel
         "Mesh",
         "PlayerGUI",
         "Text",
-        "Panel"
+        "Panel",
+        "Sky",
+        "IntValue",
+        "StringValue",
+        "BoolValue",
+        "FloatValue",
+        "Decal",
+        "ClickDetector"
     };
 
     public static GameObject LoadDataModel(string className)

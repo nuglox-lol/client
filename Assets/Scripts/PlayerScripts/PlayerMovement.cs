@@ -22,18 +22,20 @@ public class PlayerMovement : NetworkBehaviour
     [SyncVar]
     public bool CanMove = true;
 
+    private AudioSource audioSource;
+    private AudioClip walkClip;
+    private AudioClip jumpClip;
+    private bool isPlayingWalkSound = false;
+
     private void Awake()
     {
         isMobile = Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer;
-
         if (!isMobile)
         {
             var js = GameObject.Find("CoreGui/Joystick");
-            if (js != null)
-                js.SetActive(false);
+            if (js != null) js.SetActive(false);
             var jb = GameObject.Find("CoreGui/Jump");
-            if (jb != null)
-                jb.SetActive(false);
+            if (jb != null) jb.SetActive(false);
         }
     }
 
@@ -43,18 +45,15 @@ public class PlayerMovement : NetworkBehaviour
 
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
-
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody>();
             rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
-        if (!isLocalPlayer && !isStudio)
-        {
-            enabled = false;
-            return;
-        }
+        audioSource = gameObject.AddComponent<AudioSource>();
+        walkClip = Resources.Load<AudioClip>("Audio/Player/walk");
+        jumpClip = Resources.Load<AudioClip>("Audio/Player/jump");
 
         SpawnPlayerCamera();
 
@@ -88,18 +87,14 @@ public class PlayerMovement : NetworkBehaviour
     private void SpawnPlayerCamera()
     {
         if (!isLocalPlayer && !isStudio) return;
-
         GameObject prefab = Resources.Load<GameObject>("MainCameraPrefab");
         if (prefab == null) return;
-
         GameObject cameraInstance = Instantiate(prefab);
         cameraInstance.name = "PlayerCamera";
         cam = cameraInstance.transform;
-
         Camera camComponent = cam.GetComponent<Camera>();
         if (camComponent == null) return;
         if (isStudio) camComponent.fieldOfView = 95f;
-
         CameraController controller = cam.GetComponent<CameraController>();
         if (controller != null) controller.SetTarget(transform);
     }
@@ -108,7 +103,6 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!isLocalPlayer && !isStudio) return;
         if (!(isLocalPlayer || isStudio) || cam == null) return;
-
         if (isMobile && joystick != null)
         {
             var handle = joystick.transform.Find("Handle");
@@ -130,7 +124,6 @@ public class PlayerMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!isLocalPlayer && !isStudio) return;
-
         if (!CanMove) return;
 
         if (input.sqrMagnitude > 0.01f)
@@ -138,16 +131,21 @@ public class PlayerMovement : NetworkBehaviour
             Vector3 forward = cam.forward;
             forward.y = 0f;
             forward.Normalize();
-
             Vector3 right = cam.right;
             right.y = 0f;
             right.Normalize();
-
             Vector3 moveDir = (forward * input.z + right * input.x).normalized;
-
             CmdMove(moveDir);
-
             animator?.SetBool("IsWalking", true);
+            if (!isPlayingWalkSound && walkClip != null)
+            {
+                audioSource.clip = walkClip;
+                audioSource.loop = true;
+                audioSource.spatialBlend = 1f;
+                audioSource.Play();
+                CmdPlayWalkSound();
+                isPlayingWalkSound = true;
+            }
             Quaternion targetRotation = Quaternion.LookRotation(moveDir, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
@@ -155,24 +153,21 @@ public class PlayerMovement : NetworkBehaviour
         {
             CmdStop();
             animator?.SetBool("IsWalking", false);
+            if (isPlayingWalkSound)
+            {
+                audioSource.Stop();
+                CmdStopWalkSound();
+                isPlayingWalkSound = false;
+            }
         }
 
-        if (isMobile)
+        if ((isMobile && jumpPressed && isGrounded) || (!isMobile && Input.GetButtonDown("Jump") && isGrounded))
         {
-            if (jumpPressed && isGrounded)
-            {
-                CmdJump(jumpForce);
-                isGrounded = false;
-                jumpPressed = false;
-            }
-        }
-        else
-        {
-            if (Input.GetButtonDown("Jump") && isGrounded)
-            {
-                CmdJump(jumpForce);
-                isGrounded = false;
-            }
+            CmdJump(jumpForce);
+            isGrounded = false;
+            if (jumpClip != null) audioSource.PlayOneShot(jumpClip);
+            CmdPlayJumpSound();
+            if (isMobile) jumpPressed = false;
         }
 
         animator?.SetBool("IsJumping", !isGrounded);
@@ -215,6 +210,55 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (rb == null || !CanMove) return;
         rb.velocity = new Vector3(rb.velocity.x, force, rb.velocity.z);
+    }
+
+    [Command]
+    private void CmdPlayWalkSound()
+    {
+        RpcPlayWalkSound();
+    }
+
+    [ClientRpc]
+    private void RpcPlayWalkSound()
+    {
+        if (!isLocalPlayer)
+        {
+            audioSource.clip = walkClip;
+            audioSource.loop = true;
+            audioSource.spatialBlend = 1f;
+            audioSource.Play();
+        }
+    }
+
+    [Command]
+    private void CmdStopWalkSound()
+    {
+        RpcStopWalkSound();
+    }
+
+    [ClientRpc]
+    private void RpcStopWalkSound()
+    {
+        if (!isLocalPlayer)
+        {
+            audioSource.Stop();
+        }
+    }
+
+    [Command]
+    private void CmdPlayJumpSound()
+    {
+        RpcPlayJumpSound();
+    }
+
+    [ClientRpc]
+    private void RpcPlayJumpSound()
+    {
+        if (!isLocalPlayer)
+        {
+            audioSource.spatialBlend = 1f;
+            audioSource.PlayOneShot(jumpClip);
+        }
     }
 
     public override bool Weaved()

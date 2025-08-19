@@ -7,6 +7,7 @@ using Mirror;
 public class ObjectClass : NetworkBehaviour
 {
     public string className;
+    static PhysicMaterial PhysicsEngineMat;
 
     [SyncVar(hook = nameof(OnNameChanged))]
     private string syncedName;
@@ -58,6 +59,8 @@ public class ObjectClass : NetworkBehaviour
         {
             Destroy(gameObject);
         }
+
+        NewPhysicsEngine();
     }
 
     void RenameIfDuplicate()
@@ -101,5 +104,36 @@ public class ObjectClass : NetworkBehaviour
     {
         if (!isServer)
             gameObject.name = newName;
+    }
+
+    void NewPhysicsEngine()
+    {
+        var rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.interpolation = RigidbodyInterpolation.None;
+            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+            rb.solverIterations = 6;
+            rb.solverVelocityIterations = 1;
+            rb.useGravity = true;
+        }
+
+        var col = GetComponent<Collider>();
+        if (col != null)
+        {
+            if (PhysicsEngineMat == null)
+            {
+                PhysicsEngineMat = new PhysicMaterial("RBX2009");
+                PhysicsEngineMat.dynamicFriction = 0.3f;
+                PhysicsEngineMat.staticFriction = 0.3f;
+                PhysicsEngineMat.bounciness = 0.5f;
+                PhysicsEngineMat.frictionCombine = PhysicMaterialCombine.Minimum;
+                PhysicsEngineMat.bounceCombine = PhysicMaterialCombine.Average;
+            }
+            col.material = PhysicsEngineMat;
+        }
+
+        Time.fixedDeltaTime = 1f / 60f;
+        Physics.gravity = new Vector3(0, -20, 0);
     }
 }

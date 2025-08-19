@@ -47,6 +47,17 @@ public static class DataService
         public string TeamName;
         public int MeshID;
         public string Text;
+        public Vector3Serializable LightRotation;
+        public int LightExposure;
+        public float LightContrast;
+        public ColorSerializable LightTint;
+        public int SkyID;
+        public int IntValue;
+        public string StringValue;
+        public bool BoolValue;
+        public float FloatValue;
+        public int DecalId;
+        public string DecalFace;
     }
 
     [System.Serializable]
@@ -202,6 +213,67 @@ public static class DataService
             if (text3D != null)
                 text = obj.GetComponent<TMP_Text>().text;
 
+            var lightComp = obj.GetComponent<LightComponent>();
+            Vector3 lightRotation = Vector3.zero;
+            int lightExposure = 0;
+            float lightContrast = 0f;
+            Color lightTint = Color.white;
+            if (lightComp != null)
+            {
+                lightRotation = lightComp.Rotation;
+                lightExposure = Mathf.RoundToInt(lightComp.Exposure);
+                lightContrast = 1f;
+                lightTint = lightComp.Tint;
+            }
+
+            var skyComp = obj.GetComponent<Sky>();
+            int skyId = 0;
+            if(skyComp != null)
+            {
+                skyId = skyComp.id;
+            }
+
+            int intValue = 0;
+            string stringValue = "";
+            bool boolValue = false;
+            float floatValue = 0;
+
+            var valueCompInt = obj.GetComponent<IntValue>();
+            var valueCompString = obj.GetComponent<StringValue>();
+            var valueCompBool = obj.GetComponent<BoolValue>();
+            var valueCompFloat = obj.GetComponent<FloatValue>();
+
+            if (valueCompInt != null)
+            {
+                intValue = valueCompInt.Value;
+            }
+
+            if (valueCompString != null)
+            {
+                stringValue = valueCompString.Value;
+            }
+
+            if (valueCompBool != null)
+            {
+                boolValue = valueCompBool.Value;
+            }
+
+            if (valueCompFloat != null)
+            {
+                floatValue = valueCompFloat.Value;
+            }
+
+            int decalId = 0;
+            string decalFace = null;
+
+            var decalComp = obj.GetComponent<Decal>();
+
+            if(decalComp != null)
+            {
+                decalId = decalComp.DecalId;
+                decalFace = decalComp.Face;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = obj.name,
@@ -237,7 +309,18 @@ public static class DataService
                 TeamColor = new ColorSerializable(teamColor),
                 TeamName = teamName,
                 MeshID = meshId,
-                Text = text
+                Text = text,
+                LightRotation = new Vector3Serializable(lightRotation),
+                LightExposure = lightExposure,
+                LightContrast = lightContrast,
+                LightTint = new ColorSerializable(lightTint),
+                SkyID = skyId,
+                IntValue = intValue,
+                StringValue = stringValue,
+                BoolValue = boolValue,
+                FloatValue = floatValue,
+                DecalId = decalId,
+                DecalFace = decalFace,
             });
         }
 
@@ -508,6 +591,20 @@ public static class DataService
                 pd.SetRespawnTime(data.RespawnTime);
             }
 
+            var lightComp = obj.GetComponent<LightComponent>();
+            if (lightComp != null)
+            {
+                lightComp.Rotation = data.LightRotation.ToVector3();
+                lightComp.Exposure = data.LightExposure;
+                lightComp.Tint = data.LightTint.ToColor();
+            }
+
+            var skyComp = obj.GetComponent<Sky>();
+            if (skyComp != null)
+            {
+                skyComp.id = data.SkyID;
+            }    
+
             var soundComp = obj.GetComponent<Sound>();
             if (soundComp != null)
             {
@@ -558,6 +655,29 @@ public static class DataService
             if(tmpro != null)
             {
                 tmpro.text = data.Text;
+            }
+
+            var intComp = obj.GetComponent<IntValue>();
+            if (intComp != null)
+                intComp.Value = data.IntValue;
+
+            var stringComp = obj.GetComponent<StringValue>();
+            if (stringComp != null)
+                stringComp.Value = data.StringValue;
+
+            var boolComp = obj.GetComponent<BoolValue>();
+            if (boolComp != null)
+                boolComp.Value = data.BoolValue;
+
+            var floatComp = obj.GetComponent<FloatValue>();
+            if (floatComp != null)
+                floatComp.Value = data.FloatValue;
+
+            var decalComp = obj.GetComponent<Decal>();
+            if(decalComp != null)
+            {
+                decalComp.DecalId = data.DecalId;
+                decalComp.Face = data.DecalFace;
             }
         }
 
@@ -710,6 +830,67 @@ public static class DataService
             if (text3D != null)
                 text = o.GetComponent<TMP_Text>().text;
 
+            var lightComp = o.GetComponent<LightComponent>();
+            Vector3 lightRotation = Vector3.zero;
+            int lightExposure = 0;
+            float lightContrast = 0f;
+            Color lightTint = Color.white;
+            if (lightComp != null)
+            {
+                lightRotation = lightComp.Rotation;
+                lightExposure = Mathf.RoundToInt(lightComp.Exposure);
+                lightContrast = 1f;
+                lightTint = lightComp.Tint;
+            }
+
+            var skyComp = o.GetComponent<Sky>();
+            int skyId = 0;
+            if(skyComp != null)
+            {
+                skyId = skyComp.id;
+            }
+
+            int intValue = 0;
+            string stringValue = "";
+            bool boolValue = false;
+            float floatValue = 0;
+
+            var valueCompInt = o.GetComponent<IntValue>();
+            var valueCompString = o.GetComponent<StringValue>();
+            var valueCompBool = o.GetComponent<BoolValue>();
+            var valueCompFloat = o.GetComponent<FloatValue>();
+
+            if (valueCompInt != null)
+            {
+                intValue = valueCompInt.Value;
+            }
+
+            if (valueCompString != null)
+            {
+                stringValue = valueCompString.Value;
+            }
+
+            if (valueCompBool != null)
+            {
+                boolValue = valueCompBool.Value;
+            }
+
+            if (valueCompFloat != null)
+            {
+                floatValue = valueCompFloat.Value;
+            }
+
+            int decalId = 0;
+            string decalFace = null;
+
+            var decalComp = o.GetComponent<Decal>();
+
+            if(decalComp != null)
+            {
+                decalId = decalComp.DecalId;
+                decalFace = decalComp.Face;
+            }
+
             saveData.Objects.Add(new SavedObjectData
             {
                 Name = o.name,
@@ -745,7 +926,18 @@ public static class DataService
                 TeamColor = new ColorSerializable(teamColor),
                 TeamName = teamName,
                 MeshID = meshId,
-                Text = text
+                Text = text,
+                LightRotation = new Vector3Serializable(lightRotation),
+                LightExposure = lightExposure,
+                LightContrast = lightContrast,
+                LightTint = new ColorSerializable(lightTint),
+                SkyID = skyId,
+                IntValue = intValue,
+                StringValue = stringValue,
+                BoolValue = boolValue,
+                FloatValue = floatValue,
+                DecalId = decalId,
+                DecalFace = decalFace
             });
 
             foreach (Transform child in o.transform)
