@@ -111,11 +111,13 @@ public class ObjectClass : NetworkBehaviour
         var rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.interpolation = RigidbodyInterpolation.None;
-            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
-            rb.solverIterations = 6;
-            rb.solverVelocityIterations = 1;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            rb.solverIterations = 12;
+            rb.solverVelocityIterations = 4;
             rb.useGravity = true;
+            rb.drag = 0;
+            rb.angularDrag = 0.05f;
         }
 
         var col = GetComponent<Collider>();
@@ -123,17 +125,56 @@ public class ObjectClass : NetworkBehaviour
         {
             if (PhysicsEngineMat == null)
             {
-                PhysicsEngineMat = new PhysicMaterial("RBX2009");
-                PhysicsEngineMat.dynamicFriction = 0.3f;
-                PhysicsEngineMat.staticFriction = 0.3f;
+                PhysicsEngineMat = new PhysicMaterial("NUGLOXPhysics");
+                PhysicsEngineMat.dynamicFriction = 0.1f;
+                PhysicsEngineMat.staticFriction = 0.1f;
                 PhysicsEngineMat.bounciness = 0.5f;
-                PhysicsEngineMat.frictionCombine = PhysicMaterialCombine.Minimum;
-                PhysicsEngineMat.bounceCombine = PhysicMaterialCombine.Average;
+                PhysicsEngineMat.frictionCombine = PhysicMaterialCombine.Multiply;
+                PhysicsEngineMat.bounceCombine = PhysicMaterialCombine.Maximum;
             }
             col.material = PhysicsEngineMat;
         }
 
         Time.fixedDeltaTime = 1f / 60f;
-        Physics.gravity = new Vector3(0, -20, 0);
+        Physics.gravity = new Vector3(0, -25, 0);
+    }
+
+    void FixedUpdate()
+    {
+        PreventWallStick();
+    }
+
+    void PreventWallStick()
+    {
+        var rb = GetComponent<Rigidbody>();
+        if (rb == null) return;
+
+        Vector3 vel = rb.velocity;
+        if (vel.magnitude < 0.01f) return;
+
+        RaycastHit hit;
+        if (Physics.SphereCast(transform.position, 0.5f, vel.normalized, out hit, 0.6f))
+        {
+            Vector3 normal = hit.normal;
+
+            float dot = Vector3.Dot(vel, normal);
+            if (dot < 0)
+                rb.velocity = vel - normal * dot;
+        }
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        if (collision.rigidbody != null && !collision.rigidbody.isKinematic)
+        {
+            if (GetComponent<Rigidbody>() != null && !GetComponent<Rigidbody>().isKinematic)
+            {
+                Vector3 vel = collision.rigidbody.velocity;
+                if (Vector3.Dot(Vector3.up, collision.contacts[0].normal) > 0.5f)
+                {
+                    GetComponent<Rigidbody>().position += vel * Time.fixedDeltaTime;
+                }
+            }
+        }
     }
 }

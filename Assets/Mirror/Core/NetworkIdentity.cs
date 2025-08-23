@@ -1164,7 +1164,7 @@ namespace Mirror
             return lastSerialization;
         }
 
-        internal void AddObserver(NetworkConnectionToClient conn)
+        public void AddObserver(NetworkConnectionToClient conn)
         {
             if (observers.ContainsKey(conn.connectionId))
             {

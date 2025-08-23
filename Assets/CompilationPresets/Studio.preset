@@ -598,7 +598,7 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: bundleVersion
-    value: 2.3
+    value: 2.3.1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: preloadedAssets.Array.size

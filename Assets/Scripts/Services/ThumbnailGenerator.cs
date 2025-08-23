@@ -65,8 +65,8 @@ public static class ThumbnailGenerator
         }
         else
         {
-            thumbnailCamera.clearFlags = CameraClearFlags.SolidColor;
-            thumbnailCamera.backgroundColor = new Color(0x3E / 255f, 0xBF / 255f, 0xFE / 255f, 1f);
+            RenderSettings.skybox = Resources.Load<Material>("Textures/Sky");
+            thumbnailCamera.clearFlags = CameraClearFlags.Skybox;
         }
     }
 }

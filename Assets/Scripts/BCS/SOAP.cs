@@ -49,6 +49,10 @@ public class SOAP : MonoBehaviour
                         {
                             Destroy(obj);
                         }
+                        foreach (var obj in GameObject.FindGameObjectsWithTag("MainCamera"))
+                        {
+                            Destroy(obj);
+                        }
                     });
 
                     byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);

@@ -442,6 +442,7 @@ public static class DataService
             {
                 obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 obj.name = "MapCamera";
+                obj.tag = "MapCamera";
                 GameObject.Destroy(obj.GetComponent<Collider>());
                 obj.GetComponent<Renderer>().enabled = false;
             }

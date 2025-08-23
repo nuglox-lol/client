@@ -4291,7 +4291,6 @@ MonoBehaviour:
   inputField: {fileID: 1533057785}
   content: {fileID: 309152018}
   maxMessages: 50
-  scrollRect: {fileID: 863370351}
 --- !u!1 &1417402331
 GameObject:
   m_ObjectHideFlags: 0
@@ -4771,6 +4770,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 264ef760c28ff124aa15b5e408a468f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   maxTools: 7
 --- !u!114 &1492265120
 MonoBehaviour:

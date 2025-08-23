@@ -211,4 +211,24 @@ public class Player : NetworkBehaviour
         if (camController != null)
             camController.yOffset = yOffset;
     }
+
+    [Command]
+    public void CmdEnableTool(GameObject toolObj)
+    {
+        RpcSetToolState(toolObj, true);
+    }
+
+    [Command]
+    public void CmdDisableTool(GameObject toolObj)
+    {
+        RpcSetToolState(toolObj, false);
+    }
+
+    [ClientRpc]
+    void RpcSetToolState(GameObject toolObj, bool enabled)
+    {
+        var ui = FindObjectOfType<ShowTools>();
+        if (ui != null)
+            ui.RpcSetToolState(toolObj, enabled);
+    }
 }

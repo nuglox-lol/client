@@ -13,8 +13,8 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: Virtrix
-  productName: BCSService
-  defaultCursor: {fileID: 0}
+  productName: NUGLOX Player
+  defaultCursor: {fileID: 2800000, guid: 899867732d63a7e4398ed01bbc54ffa4, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
@@ -141,7 +141,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 2.3
+  bundleVersion: 2.4
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -163,7 +163,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Standalone: com.Virtrix.BCSService
+    Standalone: com.Virtrix.NUGLOX-Player
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -291,7 +291,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 89b19bee83e8ce748b017767a14475a3, type: 3}
+      m_Icon: {fileID: 2800000, guid: a28aa18369a6d434ea73968fe6449789, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
@@ -759,14 +759,15 @@ PlayerSettings:
     PS5: UNITY_POST_PROCESSING_STACK_V2
     QNX: UNITY_POST_PROCESSING_STACK_V2
     Stadia: UNITY_POST_PROCESSING_STACK_V2
-    Standalone: EDGEGAP_PLUGIN_SERVERS;MIRROR;MIRROR_89_OR_NEWER;MIRROR_90_OR_NEWER;MIRROR_93_OR_NEWER;MIRROR_96_OR_NEWER;IMGUI_FEATURE_CUSTOM_ASSERT;IMGUI_FEATURE_FREETYPE;UNITY_POST_PROCESSING_STACK_V2
+    Standalone: EDGEGAP_PLUGIN_SERVERS;IMGUI_FEATURE_CUSTOM_ASSERT;IMGUI_FEATURE_FREETYPE;UNITY_POST_PROCESSING_STACK_V2;FISHNET;FISHNET_V4;MIRROR;MIRROR_89_OR_NEWER;MIRROR_90_OR_NEWER;MIRROR_93_OR_NEWER;MIRROR_96_OR_NEWER
     VisionOS: UNITY_POST_PROCESSING_STACK_V2
     WebGL: UNITY_POST_PROCESSING_STACK_V2
     XboxOne: UNITY_POST_PROCESSING_STACK_V2
     tvOS: UNITY_POST_PROCESSING_STACK_V2
   additionalCompilerArguments: {}
   platformArchitecture: {}
-  scriptingBackend: {}
+  scriptingBackend:
+    Standalone: 1
   il2cppCompilerConfiguration: {}
   il2cppCodeGeneration: {}
   managedStrippingLevel:

@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 using System.Threading.Tasks;
 using System.Linq;
 using TMPro;
+using RuntimeGizmos;
 
 public class StudioUI : MonoBehaviour
 {   
@@ -69,7 +70,7 @@ public class StudioUI : MonoBehaviour
             }
         }
     }
-
+    
     void OnLayout()
     {
         var io = ImGui.GetIO();
@@ -628,6 +629,23 @@ public class StudioUI : MonoBehaviour
                 string valuee = valueComp.Value;
                 if(ImGui.InputText("Value", ref valuee, 64))
                     valueComp.Value = valuee;
+            }
+
+            if (selectedObject.GetComponent<ObjectClass>().className == "Decal")
+            {
+                var decalComp = selectedObject.GetComponent<Decal>();
+
+                ImGui.Separator();
+                ImGui.Text("Decal Settings");
+                ImGui.Text("");
+
+                int decalId = decalComp.DecalId;
+                if (ImGui.InputInt("DecalId", ref decalId))
+                    decalComp.DecalId = decalId;
+
+                string face = decalComp.Face;
+                if (ImGui.InputText("Face", ref face, 64))
+                    decalComp.Face = face;
             }
 
             if (selectedObject.GetComponent<ObjectClass>().className == "FloatValue")

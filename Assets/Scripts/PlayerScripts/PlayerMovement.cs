@@ -137,6 +137,7 @@ public class PlayerMovement : NetworkBehaviour
             Vector3 moveDir = (forward * input.z + right * input.x).normalized;
             CmdMove(moveDir);
             animator?.SetBool("IsWalking", true);
+            if (animator != null) animator.SetFloat("WalkSpeed", rb.velocity.magnitude / speed);
             if (!isPlayingWalkSound && walkClip != null)
             {
                 audioSource.clip = walkClip;
@@ -153,6 +154,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             CmdStop();
             animator?.SetBool("IsWalking", false);
+            if (animator != null) animator.SetFloat("WalkSpeed", 0f);
             if (isPlayingWalkSound)
             {
                 audioSource.Stop();

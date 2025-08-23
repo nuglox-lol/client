@@ -226,23 +226,37 @@ public class InstanceDatamodel
 
 	public InstanceDatamodel Parent
 	{
-		get
-		{
-			if (go == null) return null;
+	    get
+	    {
+	        if (go == null) return null;
 
-			Transform parent = go.transform.parent;
-			if (parent == null) return null;
+	        Transform parent = go.transform.parent;
+	        if (parent == null) return null;
 
-			return LuaInstance.GetCorrectInstance(parent.gameObject, luaScript) as InstanceDatamodel;
-		}
-		set
-		{
-			if (go != null)
-			{
-				go.transform.parent = value?.Transform;
-				OnPropertyChanged("Parent");
-			}
-		}
+	        return LuaInstance.GetCorrectInstance(parent.gameObject, luaScript) as InstanceDatamodel;
+	    }
+	    set
+	    {
+	        if (go != null)
+	        {
+	            Transform newParent = value?.Transform;
+	            if (newParent != null)
+	            {
+	                Vector3 worldScale = go.transform.lossyScale;
+	                go.transform.SetParent(newParent, false);
+	                go.transform.localScale = new Vector3(
+	                    worldScale.x / newParent.lossyScale.x,
+	                    worldScale.y / newParent.lossyScale.y,
+	                    worldScale.z / newParent.lossyScale.z
+	                );
+	            }
+	            else
+	            {
+	                go.transform.SetParent(null, false);
+	            }
+	            OnPropertyChanged("Parent");
+	        }
+	    }
 	}
 
 	public Transform Transform => go != null ? go.transform : null;

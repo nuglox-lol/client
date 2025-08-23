@@ -12,6 +12,7 @@ public class ShowTools : MonoBehaviour
     private Transform layoutGroup;
     private GameObject toolUIPrefab;
     private Transform playerTransform;
+    private Player playerScript;
     private List<Button> toolButtons = new List<Button>();
     private List<Outline> toolOutlines = new List<Outline>();
 
@@ -62,6 +63,7 @@ public class ShowTools : MonoBehaviour
         if (NetworkClient.connection != null && NetworkClient.connection.identity != null)
         {
             playerTransform = NetworkClient.connection.identity.transform;
+            playerScript = playerTransform.GetComponent<Player>();
         }
     }
 
@@ -119,17 +121,14 @@ public class ShowTools : MonoBehaviour
 
                 button.onClick.AddListener(() =>
                 {
+                    if (playerScript == null) return;
+
                     bool currentlyDisabled = AreChildrenDisabled(capturedTool);
 
                     if (currentlyDisabled)
-                    {
-                        DisableAllToolsExcept(capturedTool);
-                        SetToolState(capturedTool, true, outline);
-                    }
+                        playerScript.CmdEnableTool(capturedTool.gameObject);
                     else
-                    {
-                        SetToolState(capturedTool, false, outline);
-                    }
+                        playerScript.CmdDisableTool(capturedTool.gameObject);
                 });
 
                 toolButtons.Add(button);
@@ -139,23 +138,24 @@ public class ShowTools : MonoBehaviour
         }
     }
 
-    private void DisableAllToolsExcept(Transform exception)
+    public void RpcSetToolState(GameObject toolObj, bool enabled)
     {
-        Transform attachmentPoint = playerTransform.Find("LeftArm/ToolAttachmentPoint");
+        if (toolObj == null) return;
+
+        Transform attachmentPoint = toolObj.transform.parent;
         if (attachmentPoint == null) return;
 
         int index = 0;
         foreach (Transform tool in attachmentPoint)
         {
-            if (tool == exception)
+            Outline outline = index < toolOutlines.Count ? toolOutlines[index] : null;
+            if (tool == toolObj.transform)
             {
-                index++;
-                continue;
+                SetToolState(tool, enabled, outline);
             }
-
-            if (index < toolOutlines.Count)
+            else if (enabled)
             {
-                SetToolState(tool, false, toolOutlines[index]);
+                SetToolState(tool, false, outline);
             }
             index++;
         }
@@ -168,8 +168,11 @@ public class ShowTools : MonoBehaviour
             child.gameObject.SetActive(enabled);
         }
 
-        outline.enabled = enabled;
-        outline.effectColor = enabled ? enabledOutlineColor : disabledOutlineColor;
+        if (outline != null)
+        {
+            outline.enabled = enabled;
+            outline.effectColor = enabled ? enabledOutlineColor : disabledOutlineColor;
+        }
 
         ToolComponent toolComponent = tool.GetComponent<ToolComponent>();
         if (toolComponent != null)

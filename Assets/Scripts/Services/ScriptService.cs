@@ -23,6 +23,7 @@ public class ScriptService : NetworkBehaviour
     private Dictionary<string, InstanceDatamodel> trackedInstances = new();
     private HashSet<string> currentFrameKeys = new();
     public string ServiceId;
+    public bool isLocalScript;
 
     public void Init(Dictionary<string, object> globals = null)
     {
@@ -65,8 +66,17 @@ public class ScriptService : NetworkBehaviour
 
         DynValue instanceNewFunc = DynValue.NewCallback((context, args) =>
         {
+            if (!NetworkServer.active && !isLocalScript)
+                return DynValue.Nil;
+
             string className = args.Count > 0 && args[0].Type == DataType.String ? args[0].String : "Part";
             GameObject go = DataModel.SpawnClass(className);
+
+            if (!go.TryGetComponent(out NetworkIdentity identity))
+                identity = go.AddComponent<NetworkIdentity>();
+
+            NetworkServer.Spawn(go);
+            
             var instance = LuaInstance.GetCorrectInstance(go, context.GetScript());
             return UserData.Create(instance);
         });

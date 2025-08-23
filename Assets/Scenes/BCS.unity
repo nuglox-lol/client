@@ -199,6 +199,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   scriptResult: 
+  ServiceId: 
 --- !u!4 &656627489
 Transform:
   m_ObjectHideFlags: 0
@@ -482,7 +483,7 @@ Camera:
   m_GameObject: {fileID: 1937586901}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.048508644, g: 1, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
