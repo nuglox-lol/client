@@ -137,6 +137,7 @@ public class PlayerMovement : NetworkBehaviour
             Vector3 moveDir = (forward * input.z + right * input.x).normalized;
             CmdMove(moveDir);
             animator?.SetBool("IsWalking", true);
+            animator?.SetBool("IsDancing", false);
             if (animator != null) animator.SetFloat("WalkSpeed", rb.velocity.magnitude / speed);
             if (!isPlayingWalkSound && walkClip != null)
             {

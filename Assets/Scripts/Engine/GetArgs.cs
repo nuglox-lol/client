@@ -50,10 +50,10 @@ public static class GetArgs
         if (args.TryGetValue(key, out val))
             return val;
 
-        /*
+        
         if (key == "baseurl")
             return "https://nuglox.com/";
-        */
+        
 
         return null;
     }

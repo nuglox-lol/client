@@ -173,6 +173,10 @@ MonoBehaviour:
   maximumHealth: 100
   isDead: 0
   TeamName: 
+  FaceId: 0
+  ShirtId: 0
+  HatId: 0
+  PantsId: 0
   respawnTime: 5
   playerBody: {fileID: 2854521769487671702}
 --- !u!114 &-3733742721206811073

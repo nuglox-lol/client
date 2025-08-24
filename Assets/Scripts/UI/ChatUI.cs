@@ -45,6 +45,11 @@ public class ChatUI : MonoBehaviour
             inputField.ActivateInputField();
             inputField.text = "";
         }
+
+        if (localPlayer != null)
+        {
+            localPlayer.gameObject.GetComponent<PlayerMovement>().CanMove = !inputField.isFocused;
+        }
     }
 
     private void OnInputSubmitted(string text)
@@ -55,6 +60,30 @@ public class ChatUI : MonoBehaviour
         if (isRestricted)
         {
             ChatService.ReceiveMessage("[ChatService]: You've been restricted to talk!");
+            inputField.text = "";
+            inputField.DeactivateInputField();
+            return;
+        }
+        
+        if(text == "/dance")
+        {
+            localPlayer.GetComponent<Animator>().SetBool("IsDancing", true);
+            inputField.text = "";
+            inputField.DeactivateInputField();
+            return;
+        }
+
+        if (text == "/point")
+        {
+            localPlayer.GetComponent<Animator>().Play("PlayerPoint");
+            inputField.text = "";
+            inputField.DeactivateInputField();
+            return;
+        }
+
+        if (text == "/wave")
+        {
+            localPlayer.GetComponent<Animator>().Play("PlayerWave");
             inputField.text = "";
             inputField.DeactivateInputField();
             return;

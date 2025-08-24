@@ -1852,6 +1852,7 @@ MonoBehaviour:
   syncInterval: 0
   scriptResult: 
   ServiceId: 
+  isLocalScript: 0
 --- !u!4 &484924188
 Transform:
   m_ObjectHideFlags: 0
@@ -2752,7 +2753,6 @@ MonoBehaviour:
   - {fileID: 2854521769487671702, guid: 9c6226912d9342b42a09559898fb549e, type: 3}
   - {fileID: 9173301326847092, guid: 3e4dc994f8f350440aeff684f30b8ccd, type: 3}
   - {fileID: 2769521522580540343, guid: d60fc9e73520f7e4da01446893f20cd1, type: 3}
-  - {fileID: 2854521769487671702, guid: 8f9a3453f0826a841911d14990ace907, type: 3}
   - {fileID: 3933645318877831748, guid: 67d8dfd1b04a6ed468bb4e0e4c26e143, type: 3}
   - {fileID: 1251521961921655214, guid: 9fabfcf614c32834a89eb1b8738cf062, type: 3}
   - {fileID: 4957806643763680526, guid: 88ddd344978210549b8b3735da4bd2bf, type: 3}
@@ -3540,7 +3540,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00024414062, y: -9.5178}
+  m_AnchoredPosition: {x: 0.00024414062, y: -9.517822}
   m_SizeDelta: {x: -0.0005, y: 19.0354}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1028110661
@@ -4987,7 +4987,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 30.232, y: -29.92}
+  m_AnchoredPosition: {x: 30.232056, y: -29.920013}
   m_SizeDelta: {x: 60.463, y: 59.84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1466403880
@@ -5388,9 +5388,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 264ef760c28ff124aa15b5e408a468f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
   maxTools: 7
 --- !u!114 &1492265120
 MonoBehaviour:
@@ -6786,7 +6783,6 @@ MonoBehaviour:
   - {fileID: 2854521769487671702, guid: 9c6226912d9342b42a09559898fb549e, type: 3}
   - {fileID: 9173301326847092, guid: 3e4dc994f8f350440aeff684f30b8ccd, type: 3}
   - {fileID: 2769521522580540343, guid: d60fc9e73520f7e4da01446893f20cd1, type: 3}
-  - {fileID: 2854521769487671702, guid: 8f9a3453f0826a841911d14990ace907, type: 3}
   - {fileID: 3933645318877831748, guid: 67d8dfd1b04a6ed468bb4e0e4c26e143, type: 3}
   - {fileID: 1251521961921655214, guid: 9fabfcf614c32834a89eb1b8738cf062, type: 3}
   - {fileID: 4957806643763680526, guid: 88ddd344978210549b8b3735da4bd2bf, type: 3}

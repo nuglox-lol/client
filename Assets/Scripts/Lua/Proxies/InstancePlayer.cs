@@ -143,6 +143,42 @@ public class InstancePlayer : InstanceDatamodel
         }
     }
 
+    public int ShirtId
+    {
+        get => Transform.GetComponent<Player>().ShirtId;
+        set
+        {
+            Transform.GetComponent<Player>().ShirtId = value;
+        }
+    }
+
+    public int PantsId
+    {
+        get => Transform.GetComponent<Player>().PantsId;
+        set
+        {
+            Transform.GetComponent<Player>().PantsId = value;
+        }
+    }
+
+    public int HatId
+    {
+        get => Transform.GetComponent<Player>().HatId;
+        set
+        {
+            Transform.GetComponent<Player>().HatId = value;
+        }
+    }
+
+    public string BodyType
+    {
+        get => Transform.GetComponent<Player>().BodyType;
+        set
+        {
+            Transform.GetComponent<Player>().BodyType = value;
+        }
+    }
+
     private async void ApplyCharacterAppearance(int id)
     {
         await CharacterAppearanceDownloader.DownloadFullAppearanceAsync(id,
@@ -165,7 +201,7 @@ public class InstancePlayer : InstanceDatamodel
         );
     }
 
-    void LoadBodyTypeMeshes(string bodyType)
+    public void LoadBodyTypeMeshes(string bodyType)
     {
         LoadMeshForBodyPart("Torso", torsoMeshObj, ref torsoRenderer2);
         LoadMeshForBodyPart("LeftArm", leftArmMeshObj, ref leftArmRenderer2);
@@ -174,7 +210,7 @@ public class InstancePlayer : InstanceDatamodel
         LoadMeshForBodyPart("RightLeg", rightLegMeshObj, ref rightLegRenderer2);
     }
 
-    void LoadMeshForBodyPart(string bodyPart, GameObject oldObj, ref Renderer renderer)
+    public void LoadMeshForBodyPart(string bodyPart, GameObject oldObj, ref Renderer renderer)
     {
         if (oldObj == null) return;
 
@@ -207,7 +243,7 @@ public class InstancePlayer : InstanceDatamodel
         }
     }
 
-    void StartDownloadTexture(string url, Action<Texture2D> onComplete)
+    public void StartDownloadTexture(string url, Action<Texture2D> onComplete)
     {
         UnityWebRequest req = UnityWebRequestTexture.GetTexture(url);
         req.SendWebRequest().completed += _ =>
@@ -219,7 +255,7 @@ public class InstancePlayer : InstanceDatamodel
         };
     }
 
-    void ApplyFaceTexture(string imageUrl)
+    public void ApplyFaceTexture(string imageUrl)
     {
         if (Transform == null) return;
         var renderer = Transform.Find("Head/default")?.GetComponent<Renderer>();
@@ -232,7 +268,7 @@ public class InstancePlayer : InstanceDatamodel
         });
     }
 
-    void ApplyColors(Dictionary<string, string> colors)
+    public void ApplyColors(Dictionary<string, string> colors)
     {
         if (Transform == null) return;
         foreach (var kvp in colors)
@@ -244,7 +280,7 @@ public class InstancePlayer : InstanceDatamodel
         }
     }
 
-    void ApplyHat(string objUrl, string textureUrl)
+    public void ApplyHat(string objUrl, string textureUrl)
     {
         if (Transform == null) return;
         var head = Transform.Find("Head");
@@ -296,7 +332,7 @@ public class InstancePlayer : InstanceDatamodel
         };
     }
 
-    Material CreateTransparentMaterial(Texture2D texture)
+    public Material CreateTransparentMaterial(Texture2D texture)
     {
         texture.Apply();
         Material mat = new Material(Shader.Find("Standard"))
@@ -315,7 +351,7 @@ public class InstancePlayer : InstanceDatamodel
         return mat;
     }
 
-    void ApplyShirtTexture(Texture2D texture)
+    public void ApplyShirtTexture(Texture2D texture)
     {
         if (texture == null || texture.width == 0 || texture.height == 0)
             return;
@@ -324,7 +360,7 @@ public class InstancePlayer : InstanceDatamodel
         ApplyMaterialToRenderers(newMaterial, torsoRenderer2, leftArmRenderer2, rightArmRenderer2);
     }
 
-    void ApplyPantsTexture(Texture2D texture)
+    public void ApplyPantsTexture(Texture2D texture)
     {
         if (texture == null || texture.width == 0 || texture.height == 0)
             return;
@@ -335,7 +371,7 @@ public class InstancePlayer : InstanceDatamodel
             ApplyMaterialToRenderers(newMaterial, torsoRenderer2);
     }
 
-    void ApplyMaterialToRenderers(Material mat, params Renderer[] renderers)
+    public void ApplyMaterialToRenderers(Material mat, params Renderer[] renderers)
     {
         foreach (var renderer in renderers)
         {
@@ -349,21 +385,21 @@ public class InstancePlayer : InstanceDatamodel
         }
     }
 
-    bool HasShirtTexture()
+    public bool HasShirtTexture()
     {
         if (torsoRenderer2 == null) return false;
         var mats = torsoRenderer2.materials;
         return mats.Length > 1 && mats[1].mainTexture != null;
     }
 
-    void ClearShirtMaterials()
+    public void ClearShirtMaterials()
     {
         ClearMaterial(torsoRenderer2);
         ClearMaterial(leftArmRenderer2);
         ClearMaterial(rightArmRenderer2);
     }
 
-    void ClearMaterial(Renderer renderer)
+    public void ClearMaterial(Renderer renderer)
     {
         if (renderer == null) return;
         var mats = renderer.materials;

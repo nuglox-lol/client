@@ -2,6 +2,7 @@ using Mirror;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
 public class Player : NetworkBehaviour
 {
@@ -13,6 +14,11 @@ public class Player : NetworkBehaviour
     [SyncVar] public int maximumHealth = 100;
     [SyncVar] public bool isDead = false;
     [SyncVar] public string TeamName;
+    [SyncVar(hook = nameof(OnFaceIdChanged))] public int FaceId;
+    [SyncVar(hook = nameof(OnShirtIdChanged))] public int ShirtId;
+    [SyncVar(hook = nameof(OnHatIdChanged))] public int HatId;
+    [SyncVar(hook = nameof(OnPantsIdChanged))] public int PantsId;
+    [SyncVar(hook = nameof(OnBodyTypeChanged))] public string BodyType = "blocky";
 
     private InstancePlayer instancePlayer;
     private bool _hasPlayedDeathSound = false;
@@ -63,6 +69,95 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
             Debug.Log($"Health changed: {newHealth}");
+    }
+
+    void OnBodyTypeChanged(string oldValue, string newValue)
+    {
+        if (instancePlayer == null)
+            instancePlayer = new InstancePlayer(gameObject);
+
+        if (!string.IsNullOrEmpty(newValue))
+            instancePlayer.LoadBodyTypeMeshes(newValue);
+    }
+
+    void OnShirtIdChanged(int oldValue, int newValue)
+    {
+        if (instancePlayer == null)
+            instancePlayer = new InstancePlayer(gameObject);
+
+        if (newValue > 0)
+            StartCoroutine(ApplyShirtById(newValue));
+        else
+            instancePlayer.ClearShirtMaterials();
+    }
+
+    void OnHatIdChanged(int oldValue, int newValue)
+    {
+        if (instancePlayer == null)
+            instancePlayer = new InstancePlayer(gameObject);
+
+        if (newValue > 0)
+            StartCoroutine(ApplyHatById(newValue));
+        else
+            instancePlayer.ApplyHat("", "");
+    }
+
+    void OnPantsIdChanged(int oldValue, int newValue)
+    {
+        if (instancePlayer == null)
+            instancePlayer = new InstancePlayer(gameObject);
+
+        if (newValue > 0)
+            StartCoroutine(ApplyPantsById(newValue));
+        else
+            instancePlayer.ApplyPantsTexture(null);
+    }
+
+    void OnFaceIdChanged(int oldValue, int newValue)
+    {
+        if (instancePlayer == null)
+            instancePlayer = new InstancePlayer(gameObject);
+
+        if (newValue > 0)
+            StartCoroutine(ApplyFaceById(newValue));
+    }
+
+    IEnumerator ApplyShirtById(int shirtId)
+    {
+        string url = GetArgs.Get("baseUrl") + $"/catalog_storage/shirts/{shirtId}.png";
+        UnityWebRequest req = UnityWebRequestTexture.GetTexture(url);
+        yield return req.SendWebRequest();
+        if (req.result != UnityWebRequest.Result.Success) yield break;
+        Texture2D tex = DownloadHandlerTexture.GetContent(req);
+        instancePlayer.ApplyShirtTexture(tex);
+    }
+
+    IEnumerator ApplyHatById(int hatId)
+    {
+        string objUrl = GetArgs.Get("baseUrl") + $"/catalog_storage/hats/{hatId}.obj";
+        string texUrl = GetArgs.Get("baseUrl") + $"/catalog_storage/hats/{hatId}.png";
+        instancePlayer.ApplyHat(objUrl, texUrl);
+        yield return null;
+    }
+
+    IEnumerator ApplyPantsById(int pantsId)
+    {
+        string url = GetArgs.Get("baseUrl") + $"/catalog_storage/pants/{pantsId}.png";
+        UnityWebRequest req = UnityWebRequestTexture.GetTexture(url);
+        yield return req.SendWebRequest();
+        if (req.result != UnityWebRequest.Result.Success) yield break;
+        Texture2D tex = DownloadHandlerTexture.GetContent(req);
+        instancePlayer.ApplyPantsTexture(tex);
+    }
+
+    IEnumerator ApplyFaceById(int faceId)
+    {
+        string url = GetArgs.Get("baseUrl") + $"/catalog_storage/faces/{faceId}.png";
+        UnityWebRequest req = UnityWebRequestTexture.GetTexture(url);
+        yield return req.SendWebRequest();
+        if (req.result != UnityWebRequest.Result.Success) yield break;
+        Texture2D tex = DownloadHandlerTexture.GetContent(req);
+        instancePlayer.ApplyFaceTexture(url);
     }
 
     [Command]
